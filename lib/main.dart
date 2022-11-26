@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 void main() {
   runApp(const MaterialApp(
     title: 'Navigation Basics',
-    home: FirstRoute(),
+    home: LoginPage(),
   ));
 }
 
@@ -15,20 +15,23 @@ class FirstRoute extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: const Text('Homepage'), actions: [
-          PopupMenuButton<int>(
-              itemBuilder: (context) => [
-                    PopupMenuItem<int>(value: 0, child: Text('Settings')),
-                  ],
-              onSelected: (int value) {
-                if (value == 0) {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const Settings()));
-                }
-              })
-        ]),
+        appBar: AppBar(
+            title: const Text('Homepage'),
+            actions: [
+              PopupMenuButton<int>(
+                  itemBuilder: (context) => [
+                        PopupMenuItem<int>(value: 0, child: Text('Settings')),
+                      ],
+                  onSelected: (int value) {
+                    if (value == 0) {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const Settings()));
+                    }
+                  })
+            ],
+            automaticallyImplyLeading: false),
         body: ListView(
           padding: const EdgeInsets.all(20.0),
           children: [
@@ -145,6 +148,72 @@ class Individual_Statistics extends StatelessWidget {
             Navigator.pop(context);
           },
           child: const Text('Go back!'),
+        ),
+      ),
+    );
+  }
+}
+
+class LoginPage extends StatelessWidget {
+  const LoginPage({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter Demo',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('Login'),
+        ),
+        body: Column(
+          //Center Verticall & Horizontally
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Padding(
+                padding: EdgeInsets.only(top: 0),
+                child: Container(
+                    width: 200,
+                    height: 150,
+                    child: Image.asset('assets/images/pb-logo.png'))),
+            Padding(
+                padding: EdgeInsets.only(left: 15, right: 15, top: 15),
+                child: TextField(
+                  decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Email',
+                      hintText: 'Enter email'),
+                )),
+            Padding(
+                padding: EdgeInsets.only(left: 15, right: 15, top: 15),
+                child: TextField(
+                  decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Password',
+                      hintText: 'Enter password'),
+                )),
+            Padding(
+                padding: EdgeInsets.only(top: 15),
+                child: Container(
+                  height: 50,
+                  width: 200,
+                  decoration: BoxDecoration(
+                      color: Colors.blue,
+                      borderRadius: BorderRadius.circular(20)),
+                  child: TextButton(
+                    onPressed: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (_) => FirstRoute()));
+                    },
+                    child: Text(
+                      'Login',
+                      style: TextStyle(color: Colors.white, fontSize: 25),
+                    ),
+                  ),
+                )),
+          ],
         ),
       ),
     );
