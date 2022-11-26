@@ -59,7 +59,7 @@ class FirstRoute extends StatelessWidget {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const ThirdRoute()),
+                MaterialPageRoute(builder: (context) => const Camera_p()),
               );
             }));
   }
@@ -86,7 +86,7 @@ class Leaderboard extends StatelessWidget {
   }
 }
 
-class ThirdRoute extends StatelessWidget {
+class Camera_p extends StatelessWidget {
   const ThirdRoute({super.key});
 
   @override
