@@ -86,8 +86,9 @@ class Leaderboard extends StatelessWidget {
   }
 }
 
+// ignore: camel_case_types
 class Camera_p extends StatelessWidget {
-  const ThirdRoute({super.key});
+  const Camera_p({super.key});
 
   @override
   Widget build(BuildContext context) {
