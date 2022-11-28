@@ -1,12 +1,3 @@
-
-// ignore_for_file: prefer_const_constructors
-import 'dart:async';
-import 'package:flutter/material.dart';
-
-//for camera page
-import 'package:camera/camera.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
-
 import 'screens.dart';
 
 
@@ -22,7 +13,7 @@ class LoginPage extends StatelessWidget {
       ),
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Login'),
+          title: const Text('Login'),
         ),
         body: Column(
           //Center Verticall & Horizontally
@@ -35,7 +26,7 @@ class LoginPage extends StatelessWidget {
                     width: 200,
                     height: 150,
                     child: Image.asset('assets/images/pb-logo.png'))),
-            Padding(
+            const Padding(
                 padding: EdgeInsets.only(left: 15, right: 15, top: 15),
                 child: TextField(
                   decoration: InputDecoration(
@@ -43,7 +34,7 @@ class LoginPage extends StatelessWidget {
                       labelText: 'Email',
                       hintText: 'Enter email'),
                 )),
-            Padding(
+            const Padding(
                 padding: EdgeInsets.only(left: 15, right: 15, top: 15),
                 child: TextField(
                   decoration: InputDecoration(
@@ -52,7 +43,7 @@ class LoginPage extends StatelessWidget {
                       hintText: 'Enter password'),
                 )),
             Padding(
-                padding: EdgeInsets.only(top: 15),
+                padding: const EdgeInsets.only(top: 15),
                 child: Container(
                   height: 50,
                   width: 200,
@@ -64,7 +55,7 @@ class LoginPage extends StatelessWidget {
                       Navigator.push(context,
                           MaterialPageRoute(builder: (_) => FirstRoute()));
                     },
-                    child: Text(
+                    child: const Text(
                       'Login',
                       style: TextStyle(color: Colors.white, fontSize: 25),
                     ),
