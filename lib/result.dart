@@ -1,6 +1,7 @@
 import 'screens.dart';
 import 'package:http/http.dart' as http;
 
+
 class Result extends StatefulWidget {
   const Result({super.key});
 
@@ -15,6 +16,7 @@ class ResultState extends State<Result>
   bool timer1 = true;
   bool timer2 = true;
   bool timer3 = true;
+
   String filename = 'testBarcode.png';
   File imageFile = File('assets/images/testBarcode.png');
 
