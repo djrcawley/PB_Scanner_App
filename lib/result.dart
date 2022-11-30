@@ -1,6 +1,9 @@
 import 'screens.dart';
 import 'package:http/http.dart' as http;
 
+//Variable
+var gameData; /// Store API response with points
+
 
 class Result extends StatefulWidget {
   const Result({super.key});
@@ -17,11 +20,11 @@ class ResultState extends State<Result>
   bool timer2 = true;
   bool timer3 = true;
 
-  String filename = 'testBarcode.png';
-  File imageFile = File('assets/images/testBarcode.png');
+  
 
   upload() async
   {
+    File imageFile = File('assets/images/testBarcode.png');
     final request = http.MultipartRequest("POST", Uri.parse("http://sdp23.cse.uconn.edu"));
     final headers = {"Content-type": "multipart/form-data"};
 
@@ -37,16 +40,19 @@ class ResultState extends State<Result>
 
     request.headers.addAll(headers);
 
-    print("request: "+request.toString());
+    print("request: "+ request.toString());
     
     var response = await request.send();
 
     
     http.Response res = await http.Response.fromStream(response);
-    final resJson = jsonDecode(res.body);
-    final Map<String, dynamic> data = json.decode(resJson);
-    print(resJson);
+    final responseJSON = jsonDecode(res.body);
+    /// How to access variables within json: responseJSON['variables']
+    gameData = responseJSON;
+    print(gameData);
     setState(() {});
+    /// Maybe: Add call here to update displayed points
+    /// 
   }
 
 
@@ -94,6 +100,7 @@ class ResultState extends State<Result>
               }
             ),
 
+          //Run if gameData != null
             const Text('Barcode Scanned!', style: TextStyle(fontSize: 25),),
 
             if(timer1) ...[
