@@ -44,7 +44,7 @@ class ResultState extends State<Result>
     
     http.Response res = await http.Response.fromStream(response);
     final resJson = jsonDecode(res.body);
-    final Map<String, dynamic> data = json.decode(resJson);
+    //final Map<String, dynamic> data = json.decode(resJson);
     print(resJson);
     setState(() {});
   }
