@@ -1,3 +1,4 @@
+
 import 'screens.dart';
 import 'package:http/http.dart' as http;
 
@@ -22,7 +23,7 @@ class ResultState extends State<Result>
 
   
 
-  upload() async
+  Future<Map<String, dynamic>> upload() async
   {
     File imageFile = File('assets/images/testBarcode.png');
     final request = http.MultipartRequest("POST", Uri.parse("http://sdp23.cse.uconn.edu"));
@@ -50,7 +51,7 @@ class ResultState extends State<Result>
     /// How to access variables within json: responseJSON['variables']
     gameData = responseJSON;
     print(gameData);
-    setState(() {});
+    return responseJSON;
     /// Maybe: Add call here to update displayed points
     /// 
   }
@@ -84,15 +85,56 @@ class ResultState extends State<Result>
       appBar: AppBar(
         title: const Text('Results'),
       ),
-      body: Center(
+      body: FutureBuilder<Map<String, dynamic>> (
+        future: upload(),
+        builder: ((context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
+          if(snapshot.hasData){
+            var testData = snapshot.data;
+            print(snapshot.data?['PointsGained']);
+            return Center (
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: testData!.entries.map((entry) {
+                  return Container(
+                  child: ListTile(
+                      title: Text(entry.toString()),
+                  ),
+                  margin: EdgeInsets.all(5),
+                  padding: EdgeInsets.all(5),
+                  color: Colors.green[100],
+                      );
+                  }).toList(),
+              )
+            );
+            
+          }
+          else {
+            return CircularProgressIndicator();
+          }
+
+        }
+      
+      
+      
+      
+      /*
+      Center(
         child: Column (
           mainAxisAlignment: MainAxisAlignment.center,
+          children: gameData.entries.map((entry) {
+              return Container(
+                  child: ListTile(
+                      title: Text(entry.toString()),
+                  ),
+                  margin: EdgeInsets.all(5),
+                  padding: EdgeInsets.all(5),
+                  color: Colors.green[100],
+              );
+          }).toList(),
+          
+        
+        child: Column(
           children: <Widget> [
-            //Image.file(imageFile),
-            //Text('Vendor: ' +jsonMap['Vendor']),
-
-            //Text(' Postage Value' +jsonMap['Postage Value']),
-
             ElevatedButton(
               child: const Text('Upload Test'),
               onPressed: () {
@@ -101,8 +143,9 @@ class ResultState extends State<Result>
             ),
 
           //Run if gameData != null
+          
             const Text('Barcode Scanned!', style: TextStyle(fontSize: 25),),
-
+            
             if(timer1) ...[
             ]
             else ...[
@@ -124,10 +167,9 @@ class ResultState extends State<Result>
             
 
 
-          ],
-        ),
+          ], */
+        ), 
       ),
     );
   }
-
 }
