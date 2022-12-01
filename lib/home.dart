@@ -1,7 +1,5 @@
 import 'screens.dart';
 
-
-
 class FirstRoute extends StatelessWidget {
   const FirstRoute({super.key});
 
@@ -54,11 +52,14 @@ class FirstRoute extends StatelessWidget {
         floatingActionButton: FloatingActionButton(
             child: const Icon(Icons.add),
             onPressed: () async {
+              final cameras = await availableCameras();
+              final firstCamera = cameras.first;
               await availableCameras().then((cameras) {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => CameraPage(cameras: cameras)));
+                        builder: (context) =>
+                            TakePictureScreen(camera: firstCamera)));
               });
             }));
   }
