@@ -1,13 +1,17 @@
 import 'screens.dart';
 
 class MyStatefulWidget extends StatefulWidget {
-  const MyStatefulWidget({super.key});
+  final CameraDescription camera;
+  const MyStatefulWidget({super.key, required this.camera});
 
   @override
-  State<MyStatefulWidget> createState() => FirstRoute();
+  State<MyStatefulWidget> createState() => FirstRoute(test: camera);
 }
 
 class FirstRoute extends State<MyStatefulWidget> {
+  FirstRoute({required this.test});
+  final CameraDescription test;
+
   int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
@@ -15,13 +19,35 @@ class FirstRoute extends State<MyStatefulWidget> {
       _selectedIndex = index;
     });
   }
+  
+ 
 
-  static const List<Widget> _pages = <Widget>[
+  // static const List<Widget> _pages = <Widget>[
+  //   Individual_Statistics(),
+  //   LoginPage(camera: test),
+  //   Icon(
+  //     Icons.camera_alt_outlined,
+  //     size: 150,
+  //   ),
+  //   Icon(
+  //     Icons.bar_chart,
+  //     size: 150,
+  //   ),
+  //   Icon(
+  //     Icons.settings,
+  //     size: 150,
+  //   ),
+  // ];
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Homepage'),
+      ),
+      body: Center(
+        child: [
     Individual_Statistics(),
-    Icon(
-      Icons.camera_alt_outlined,
-      size: 150,
-    ),
+    TakePictureScreen(camera: test),
     Icon(
       Icons.bar_chart,
       size: 150,
@@ -30,15 +56,7 @@ class FirstRoute extends State<MyStatefulWidget> {
       Icons.settings,
       size: 150,
     ),
-  ];
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Homepage'),
-      ),
-      body: Center(
-        child: _pages.elementAt(_selectedIndex), //New
+  ].elementAt(_selectedIndex), //New
       ),
       bottomNavigationBar: BottomNavigationBar(
           iconSize: 20,
