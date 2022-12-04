@@ -123,7 +123,7 @@ class DisplayPictureScreen extends StatelessWidget {
           Navigator.of(context).pop();
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => Result(jsonStr: responseDataHttp)));
+            MaterialPageRoute(builder: (context) => Result(jsonStr: "")));
           //await presentAlert(context,
           //    title: 'Success', message: responseDataHttp);
         },
