@@ -1,9 +1,8 @@
 import 'screens.dart';
 
-
-
 class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+  final CameraDescription camera;
+  const LoginPage({super.key, required this.camera});
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -52,8 +51,10 @@ class LoginPage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(20)),
                   child: TextButton(
                     onPressed: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (_) => FirstRoute()));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => MyStatefulWidget(camera: camera)));
                     },
                     child: const Text(
                       'Login',
