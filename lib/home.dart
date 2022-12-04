@@ -98,7 +98,7 @@ class Individual_Statistics extends StatelessWidget {
           onPressed: () {
             //Navigator.push(
             //  context,
-            //  MaterialPageRoute(builder: (context) => Result(jsonStr: "{\n\"TestKey\":\"TestData\",\n}"),)
+            //  MaterialPageRoute(builder: (context) => Result(jsonStr: "{\n\"TestKey\":\"TestData\",\n\"key2\":\"data\"\n}"),)
             //);
             Navigator.pop(context);
           },

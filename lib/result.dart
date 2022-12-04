@@ -87,9 +87,10 @@ class ResultState extends State<Result>
 
       body: Column(
         children: <Widget> [
-          const Text("Test Text"),
-          const Text("test2")
-          //for(var i in jsonMap ) Text(jsonMap[i]),
+          const Text("test"),
+
+          for(var entry in jsonMap.entries) Text(entry.key + entry.value)
+          //for(var i in jsonMap.entries) Text(jsonMap.entries.toString()),
 
         ], 
       ), 
