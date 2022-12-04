@@ -19,8 +19,6 @@ class FirstRoute extends State<MyStatefulWidget> {
       _selectedIndex = index;
     });
   }
-  
- 
 
   // static const List<Widget> _pages = <Widget>[
   //   Individual_Statistics(),
@@ -46,17 +44,14 @@ class FirstRoute extends State<MyStatefulWidget> {
       ),
       body: Center(
         child: [
-    Individual_Statistics(),
-    TakePictureScreen(camera: test),
-    Icon(
-      Icons.bar_chart,
-      size: 150,
-    ),
-    Icon(
-      Icons.settings,
-      size: 150,
-    ),
-  ].elementAt(_selectedIndex), //New
+          Individual_Statistics(),
+          TakePictureScreen(camera: test),
+          Settings(),
+          Icon(
+            Icons.settings,
+            size: 150,
+          ),
+        ].elementAt(_selectedIndex), //New
       ),
       bottomNavigationBar: BottomNavigationBar(
           iconSize: 20,
@@ -105,6 +100,30 @@ class Individual_Statistics extends StatelessWidget {
           child: const Text('Go back!'),
         ),
       ),
+    );
+  }
+}
+
+class Settings extends StatelessWidget {
+  const Settings({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Individual Statistics'),
+      ),
+      body: ListView(children: [
+        ListTile(
+            leading: Icon(Icons.account_box_outlined), title: Text("Account")),
+        ListTile(
+            leading: Icon(Icons.private_connectivity),
+            title: Text("Privacy & Security")),
+        ListTile(
+            leading: Icon(Icons.notifications_active_outlined),
+            title: Text("Notifications")),
+        ListTile(leading: Icon(Icons.logout_outlined), title: Text("Logout")),
+      ]),
     );
   }
 }
