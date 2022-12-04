@@ -2,12 +2,10 @@
 import 'screens.dart';
 import 'package:http/http.dart' as http;
 
-//Variable
-var gameData; /// Store API response with points
-
 
 class Result extends StatefulWidget {
-  const Result({super.key});
+  final String jsonStr;
+  const Result({super.key, required this.jsonStr});
 
   @override
   State<Result> createState() => ResultState();
@@ -48,9 +46,6 @@ class ResultState extends State<Result>
     
     http.Response res = await http.Response.fromStream(response);
     final responseJSON = jsonDecode(res.body);
-    /// How to access variables within json: responseJSON['variables']
-    gameData = responseJSON;
-    print(gameData);
     return responseJSON;
     /// Maybe: Add call here to update displayed points
     /// 
@@ -59,6 +54,8 @@ class ResultState extends State<Result>
 
   @override
   void initState() {
+
+
     super.initState();
     Timer(Duration(seconds: 1), () {
       setState(() {
@@ -81,10 +78,53 @@ class ResultState extends State<Result>
 
   @override
   Widget build(BuildContext context) {
+    final jsonMap = jsonDecode(widget.jsonStr);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Results'),
       ),
+
+      body: Column(
+        children: <Widget> [
+          for(var i in jsonMap ) Text(jsonMap[i]),
+          
+
+
+        ], 
+      ), 
+    );
+  }
+}
+
+
+
+/*
+          const Text('Barcode Scanned!', style: TextStyle(fontSize: 25),),
+          
+          if(timer1) ...[
+          ]
+          else ...[
+            const Text('Scanned package: +100',style: TextStyle(fontSize: 25),),
+          ],
+          if(timer2) ...[
+            const Text(''),
+          ]
+          else ...[
+            const Text('USPS vendor: +50',style: TextStyle(fontSize: 25),),
+          ],
+          if(timer3) ...[
+            const Text(''),
+          ]
+          else ...[
+            const Text('\nTotal: +150 points',style: TextStyle(fontSize: 25),),
+          ],
+*/
+
+
+
+/*
+
       body: FutureBuilder<Map<String, dynamic>> (
         future: upload(),
         builder: ((context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
@@ -117,7 +157,6 @@ class ResultState extends State<Result>
       
       
       
-      /*
       Center(
         child: Column (
           mainAxisAlignment: MainAxisAlignment.center,
@@ -131,45 +170,4 @@ class ResultState extends State<Result>
                   color: Colors.green[100],
               );
           }).toList(),
-          
-        
-        child: Column(
-          children: <Widget> [
-            ElevatedButton(
-              child: const Text('Upload Test'),
-              onPressed: () {
-                upload();
-              }
-            ),
-
-          //Run if gameData != null
-          
-            const Text('Barcode Scanned!', style: TextStyle(fontSize: 25),),
-            
-            if(timer1) ...[
-            ]
-            else ...[
-              const Text('Scanned package: +100',style: TextStyle(fontSize: 25),),
-            ],
-            if(timer2) ...[
-              const Text(''),
-            ]
-            else ...[
-              const Text('USPS vendor: +50',style: TextStyle(fontSize: 25),),
-            ],
-            if(timer3) ...[
-              const Text(''),
-            ]
-            else ...[
-              const Text('\nTotal: +150 points',style: TextStyle(fontSize: 25),),
-            ],
-            
-            
-
-
-          ], */
-        ), 
-      ),
-    );
-  }
-}
+      */
