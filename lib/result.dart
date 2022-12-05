@@ -18,7 +18,7 @@ class ResultState extends State<Result>
   bool timer1 = true;
   bool timer2 = true;
   bool timer3 = true;
-
+  String displayStr = 'Score\n\n';
   
 
   Future<Map<String, dynamic>> upload() async
@@ -54,46 +54,40 @@ class ResultState extends State<Result>
 
   @override
   void initState() {
-
-
     super.initState();
-    Timer(Duration(seconds: 1), () {
-      setState(() {
-        timer1 = false;
-      });
-    });
-    Timer(Duration(seconds: 2), () {
-      setState(() {
-        timer2 = false;
-      });
-    });
-    Timer(Duration(seconds: 3), () {
-      setState(() {
-        timer3 = false;
-      });
-    });
+    buildList();
   }
 
+  void buildList() async
+  {
+    final jsonMap = jsonDecode(widget.jsonStr);
+    for(var entry in jsonMap.entries)
+    {
+      await Future.delayed(Duration(seconds: 1));
+      displayStr = displayStr + (entry.key +': ' + entry.value.toString()+'\n');
+      setState(() {});
+        
+    }
+
+  }
 
 
   @override
   Widget build(BuildContext context) {
-    final jsonMap = jsonDecode(widget.jsonStr);
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Results'),
       ),
-
-      body: Column(
-        children: <Widget> [
-          const Text("test"),
-
-          for(var entry in jsonMap.entries) Text(entry.key + entry.value.toString())
-          //for(var i in jsonMap.entries) Text(jsonMap.entries.toString()),
-
-        ], 
-      ), 
+      body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget> [
+              Text(displayStr, style: TextStyle(fontSize: 30),textAlign: TextAlign.center,)
+            ], 
+          ),
+      )
     );
   }
 }
