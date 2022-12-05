@@ -61,6 +61,31 @@ class FirstRoute extends State<MyStatefulWidget> {
 }
 
 // ignore: camel_case_types
+class Individual_Statistics extends StatelessWidget {
+  const Individual_Statistics({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Individual Statistics'),
+      ),
+      body: Center(
+
+        child: ElevatedButton(
+          onPressed: () {
+            //Navigator.push(
+            //  context,
+            //  MaterialPageRoute(builder: (context) => Result(jsonStr: "{\n\"TestKey\":\"TestData\",\n\"key2\":\"data\"\n}"),)
+            //);
+            Navigator.pop(context);
+          },
+          child: const Text('Go back!'),
+        ),
+      ),
+    );
+  }
+}
 
 class Settings extends StatelessWidget {
   const Settings({super.key});

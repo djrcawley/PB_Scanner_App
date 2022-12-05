@@ -121,8 +121,11 @@ class DisplayPictureScreen extends StatelessWidget {
           var responseDataHttp =
               await _httpUploadService.uploadPhotos(imagePath);
           Navigator.of(context).pop();
-          await presentAlert(context,
-              title: 'Success', message: responseDataHttp);
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => Result(jsonStr: responseDataHttp)));
+          //await presentAlert(context,
+          //    title: 'Success', message: responseDataHttp);
         },
         child: const Icon(Icons.add),
         backgroundColor: Colors.green,
