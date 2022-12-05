@@ -89,7 +89,7 @@ class ResultState extends State<Result>
         children: <Widget> [
           const Text("test"),
 
-          for(var entry in jsonMap.entries) Text(entry.key + entry.value)
+          for(var entry in jsonMap.entries) Text(entry.key + entry.value.toString())
           //for(var i in jsonMap.entries) Text(jsonMap.entries.toString()),
 
         ], 
