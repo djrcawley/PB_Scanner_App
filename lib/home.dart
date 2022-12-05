@@ -39,9 +39,6 @@ class FirstRoute extends State<MyStatefulWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Homepage'),
-      ),
       body: Center(
         child: [
           Individual_Statistics(),
