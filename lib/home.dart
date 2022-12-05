@@ -93,8 +93,13 @@ class Individual_Statistics extends StatelessWidget {
         title: const Text('Individual Statistics'),
       ),
       body: Center(
+
         child: ElevatedButton(
           onPressed: () {
+            //Navigator.push(
+            //  context,
+            //  MaterialPageRoute(builder: (context) => Result(jsonStr: "{\n\"TestKey\":\"TestData\",\n\"key2\":\"data\"\n}"),)
+            //);
             Navigator.pop(context);
           },
           child: const Text('Go back!'),
