@@ -25,7 +25,7 @@ class ResultState extends State<Result>
     for(var entry in jsonMap.entries)
     {
       await Future.delayed(Duration(seconds: 1));
-      displayStr = displayStr + (entry.key +': ' + entry.value.toString()+'\n');
+      displayStr = displayStr + entry.value.toString()+'\n';
       setState(() {});
     }
   }
@@ -42,7 +42,7 @@ class ResultState extends State<Result>
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget> [
-              Text(displayStr, style: TextStyle(fontSize: 30),textAlign: TextAlign.center,)
+              Text(displayStr, style: TextStyle(fontSize: 25),textAlign: TextAlign.center,)
             ], 
           ),
       )
