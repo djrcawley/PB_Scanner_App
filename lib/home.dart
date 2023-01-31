@@ -1,14 +1,14 @@
 import 'screens.dart';
 
-class MyStatefulWidget extends StatefulWidget {
+class HomePage extends StatefulWidget {
   final CameraDescription camera;
-  const MyStatefulWidget({super.key, required this.camera});
+  const HomePage({super.key, required this.camera});
 
   @override
-  State<MyStatefulWidget> createState() => FirstRoute(test: camera);
+  State<HomePage> createState() => FirstRoute(test: camera);
 }
 
-class FirstRoute extends State<MyStatefulWidget> {
+class FirstRoute extends State<HomePage> {
   FirstRoute({required this.test});
   final CameraDescription test;
 

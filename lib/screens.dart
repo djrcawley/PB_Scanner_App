@@ -14,3 +14,4 @@ export 'login.dart';
 export 'home.dart';
 export 'camera.dart';
 export 'result.dart';
+export 'create.dart';

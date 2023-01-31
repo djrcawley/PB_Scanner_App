@@ -1,18 +1,18 @@
 import 'screens.dart';
 
-class LoginPage extends StatelessWidget {
+class CreatePage extends StatelessWidget {
   final CameraDescription camera;
-  const LoginPage({super.key, required this.camera});
+  const CreatePage({super.key, required this.camera});
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Create',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
       home: Scaffold(
           appBar: AppBar(
-            title: const Text('Login'),
+            title: const Text('Create Account'),
           ),
           body: Center(
             child: SingleChildScrollView(
@@ -40,6 +40,14 @@ class LoginPage extends StatelessWidget {
                           labelText: 'Password',
                           hintText: 'Enter password'),
                     )),
+                    const Padding(
+                    padding: EdgeInsets.only(left: 15, right: 15, top: 15),
+                    child: TextField(
+                      decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Confirm Password',
+                          hintText: 'Re-Enter password'),
+                    )),
                 Padding(
                     padding: const EdgeInsets.only(top: 15),
                     child: Container(
@@ -57,7 +65,7 @@ class LoginPage extends StatelessWidget {
                                       HomePage(camera: camera)));
                         },
                         child: const Text(
-                          'Login',
+                          'Create',
                           style: TextStyle(color: Colors.white, fontSize: 25),
                         ),
                       ),
@@ -65,17 +73,7 @@ class LoginPage extends StatelessWidget {
               ],
             )),
           ),
-          bottomNavigationBar: Container(
-              child: TextButton(
-                  style: TextButton.styleFrom(
-                    textStyle: const TextStyle(fontSize: 15),
-                  ),
-                  onPressed: () {Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (_) =>
-                                      CreatePage(camera: camera)));},
-                  child: const Text('New User? Create Account')))),
+          ),
     );
   }
 }
