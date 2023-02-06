@@ -5,25 +5,33 @@ class CreatePage extends StatelessWidget {
   const CreatePage({super.key, required this.camera});
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Create',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: Scaffold(
-          appBar: AppBar(
-            title: const Text('Create Account'),
-          ),
+    return Scaffold(
+      appBar: AppBar(
+            // title: const Text('Create Account'),
+          ),        
           body: Center(
             child: SingleChildScrollView(
                 child: Column(
               children: [
                 Padding(
                     padding: EdgeInsets.only(top: 0),
-                    child: Container(
-                        width: 120,
-                        height: 90,
-                        child: Image.asset('assets/images/pb-logo.png'))),
+                    child: Column(
+                children: <Widget>[
+                  Text("Sign up",
+                  style: TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+
+                  ),),
+                  SizedBox(height: 20,),
+                  Text("Create an account, It's free ",
+                    style: TextStyle(
+                        fontSize: 15,
+                        color:Colors.grey[700]),)
+
+
+                ],
+              ),),
                 const Padding(
                     padding: EdgeInsets.only(left: 15, right: 15, top: 15),
                     child: TextField(
@@ -65,14 +73,13 @@ class CreatePage extends StatelessWidget {
                                       HomePage(camera: camera)));
                         },
                         child: const Text(
-                          'Create',
+                          'Sign up',
                           style: TextStyle(color: Colors.white, fontSize: 25),
                         ),
                       ),
                     )),
               ],
             )),
-          ),
           ),
     );
   }
