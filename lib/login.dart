@@ -5,16 +5,11 @@ class LoginPage extends StatelessWidget {
   const LoginPage({super.key, required this.camera});
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: Scaffold(
-          appBar: AppBar(
+    return Scaffold(
+      appBar: AppBar(
             title: const Text('Login'),
           ),
-          body: Center(
+                    body: Center(
             child: SingleChildScrollView(
                 child: Column(
               children: [
@@ -75,7 +70,7 @@ class LoginPage extends StatelessWidget {
                               MaterialPageRoute(
                                   builder: (_) =>
                                       CreatePage(camera: camera)));},
-                  child: const Text('New User? Create Account')))),
+                  child: const Text('New User? Create Account'))),
     );
   }
 }
