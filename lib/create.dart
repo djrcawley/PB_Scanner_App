@@ -132,7 +132,7 @@ class _CreatePage extends State<CreatePage> {
                                         context,
                                         MaterialPageRoute(
                                             builder: (_) => HomePage(
-                                                camera: widget.camera)));
+                                                camera: widget.camera, username: userController.text)));
                                   } else {
                                     /// account already exist toast???
                                     showAlertDialog(context);
