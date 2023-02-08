@@ -19,7 +19,7 @@ class _CreatePage extends State<CreatePage> {
   final userController = TextEditingController();
   final passController = TextEditingController();
   final passCheckController = TextEditingController();
-  bool invalidPassword = false;
+  var existingAccount = false;
 
   @override
   void dispose() {
@@ -66,34 +66,34 @@ class _CreatePage extends State<CreatePage> {
                         padding:
                             const EdgeInsets.only(left: 15, right: 15, top: 15),
                         child: TextFormField(
-                          controller: userController,
-                          decoration: const InputDecoration(
-                              border: OutlineInputBorder(),
-                              labelText: 'Email',
-                              hintText: 'Enter email'),
-                              validator: (value) {
-                              if (value != '') {
+                            controller: userController,
+                            decoration: const InputDecoration(
+                                border: OutlineInputBorder(),
+                                labelText: 'Email',
+                                hintText: 'Enter email'),
+                            validator: (value) {
+                              if (value != '' && !existingAccount) {
                                 return null;
+                              } else if (existingAccount == true) {
+                                return 'This username is already taken.';
                               }
-                                return 'Plase enter a username.';
-                            }
-                        )),
+                              return 'Plase enter a username.';
+                            })),
                     Padding(
                         padding:
                             const EdgeInsets.only(left: 15, right: 15, top: 15),
                         child: TextFormField(
-                          controller: passController,
-                          decoration: const InputDecoration(
-                              border: OutlineInputBorder(),
-                              labelText: 'Password',
-                              hintText: 'Enter password'),
-                              validator: (value) {
+                            controller: passController,
+                            decoration: const InputDecoration(
+                                border: OutlineInputBorder(),
+                                labelText: 'Password',
+                                hintText: 'Enter password'),
+                            validator: (value) {
                               if (value != '') {
                                 return null;
                               }
-                                return 'Plase enter password.';
-                            }
-                        )),
+                              return 'Plase enter password.';
+                            })),
                     Padding(
                         padding:
                             const EdgeInsets.only(left: 15, right: 15, top: 15),
@@ -108,7 +108,7 @@ class _CreatePage extends State<CreatePage> {
                               if (value == passController.text) {
                                 return null;
                               }
-                              if(value == ''){
+                              if (value == '') {
                                 return 'Plase enter password.';
                               }
                               return "Passwords do not match.";
@@ -123,21 +123,31 @@ class _CreatePage extends State<CreatePage> {
                               borderRadius: BorderRadius.circular(20)),
                           child: TextButton(
                             onPressed: () {
-                              if (_formKey.currentState!.validate()) {
+                              if (_formKey.currentState!.validate() ||
+                                  (existingAccount &&
+                                      userController.text.isNotEmpty &&
+                                      passController.text.isNotEmpty &&
+                                      passCheckController.text.isNotEmpty)) {
                                 createAccount(userController.text,
                                         passController.text)
                                     .then((value) {
                                   if (value == true) {
+                                    existingAccount = false;
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                             builder: (_) => HomePage(
-                                                camera: widget.camera, username: userController.text)));
+                                                camera: widget.camera,
+                                                username:
+                                                    userController.text)));
                                   } else {
-                                    /// account already exist toast???
-                                    showAlertDialog(context);
+                                    existingAccount = true;
+                                    _formKey.currentState!.validate();
                                   }
                                 });
+                              } else {
+                                existingAccount = false;
+                                _formKey.currentState!.validate();
                               }
                             },
                             child: const Text(
@@ -175,28 +185,4 @@ bool validatePassword(String pass, String check) {
     return false;
   }
   return true;
-}
-
-showAlertDialog(BuildContext context) {
-  // set up the button
-  Widget okButton = TextButton(
-    child: const Text("OK"),
-    onPressed: () { Navigator.of(context).pop(); },
-  );
-
-  // set up the AlertDialog
-  AlertDialog alert = AlertDialog(
-    content: const Text("This username has already been taken."),
-    actions: [
-      okButton,
-    ],
-  );
-
-  // show the dialog
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return alert;
-    },
-  );
 }

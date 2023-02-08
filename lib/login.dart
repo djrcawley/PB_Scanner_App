@@ -1,4 +1,5 @@
 import 'screens.dart';
+import 'package:http/http.dart' as http;
 
 class LoginPage extends StatefulWidget {
   final CameraDescription camera;
@@ -17,6 +18,8 @@ class _LoginPage extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final userController = TextEditingController();
   final passController = TextEditingController();
+
+  var incorrectCredentials = false;
 
   @override
   Widget build(BuildContext context) {
@@ -46,8 +49,10 @@ class _LoginPage extends State<LoginPage> {
                                 labelText: 'Email',
                                 hintText: 'Enter email'),
                             validator: (value) {
-                              if (value != '') {
+                              if (value != '' && !incorrectCredentials) {
                                 return null;
+                              } else if (incorrectCredentials == true) {
+                              return 'The username/password is incorrect.';
                               }
                               return 'Plase enter a username.';
                             })),
@@ -61,8 +66,10 @@ class _LoginPage extends State<LoginPage> {
                                 labelText: 'Password',
                                 hintText: 'Enter password'),
                             validator: (value) {
-                              if (value != '') {
+                              if (value != '' && !incorrectCredentials) {
                                 return null;
+                              } else if (incorrectCredentials == true) {
+                                return '';
                               }
                               return 'Plase enter a password.';
                             })),
@@ -76,14 +83,28 @@ class _LoginPage extends State<LoginPage> {
                               borderRadius: BorderRadius.circular(20)),
                           child: TextButton(
                             onPressed: () {
-                              if (_formKey.currentState!.validate()) {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (_) => HomePage(
-                                              camera: widget.camera,
-                                              username: userController.text,
-                                            )));
+                              if (_formKey.currentState!.validate() ||
+                                  (incorrectCredentials == true && userController.text.isNotEmpty && passController.text.isNotEmpty)) {
+                                loginRequest(userController.text,
+                                        passController.text)
+                                    .then((value) {
+                                  if (value == true) {
+                                    incorrectCredentials = false;
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (_) => HomePage(
+                                                camera: widget.camera,
+                                                username:
+                                                    userController.text)));
+                                  } else {
+                                    incorrectCredentials = true;
+                                    _formKey.currentState!.validate();
+                                  }
+                                });
+                              } else {
+                                incorrectCredentials = false;
+                                _formKey.currentState!.validate();
                               }
                             },
                             child: const Text(
@@ -109,4 +130,30 @@ class _LoginPage extends State<LoginPage> {
           child: const Text('New User? Create Account')),
     );
   }
+}
+
+Future<bool> loginRequest(username, pass) async {
+  Map<String, String> body = {'username': username, 'password': pass};
+  String jsonBody = json.encode(body);
+
+  Uri uri = Uri.parse('http://137.99.130.182/login');
+
+  final encoding = Encoding.getByName('utf-8');
+  final header = {
+    "Accept": "application/json",
+    "Content-Type": "application/json"
+  };
+
+  Response response = await post(
+    uri,
+    headers: header,
+    body: jsonBody,
+    encoding: encoding,
+  );
+
+  var responseDecoded = response.body;
+  if (responseDecoded == 'Success') {
+    return true;
+  }
+  return false;
 }
