@@ -2,7 +2,8 @@ import 'screens.dart';
 
 class HomePage extends StatefulWidget {
   final CameraDescription camera;
-  const HomePage({super.key, required this.camera});
+  final String username;
+  const HomePage({super.key, required this.camera, required this.username});
 
   @override
   State<HomePage> createState() => FirstRoute(test: camera);
