@@ -8,9 +8,11 @@ class TakePictureScreen extends StatefulWidget {
   const TakePictureScreen({
     super.key,
     required this.camera,
+    required this.username
   });
 
   final CameraDescription camera;
+  final String username;
 
   @override
   TakePictureScreenState createState() => TakePictureScreenState();
@@ -85,6 +87,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
                   // Pass the automatically generated path to
                   // the DisplayPictureScreen widget.
                   imagePath: _images,
+                  username: widget.username,
                 ),
               ),
             );
@@ -102,8 +105,9 @@ class TakePictureScreenState extends State<TakePictureScreen> {
 // A widget that displays the picture taken by the user.
 class DisplayPictureScreen extends StatelessWidget {
   final List<String> imagePath;
+  final String username;
 
-  const DisplayPictureScreen({super.key, required this.imagePath});
+  const DisplayPictureScreen({super.key, required this.imagePath, required this.username});
 
   @override
   Widget build(BuildContext context) {
@@ -117,7 +121,7 @@ class DisplayPictureScreen extends StatelessWidget {
         onPressed: () async {
           presentLoader(context, text: 'Uploading...');
           // Add your onPressed code here!
-          final HttpUploadService _httpUploadService = HttpUploadService();
+          final HttpUploadService _httpUploadService = HttpUploadService(username);
           var responseDataHttp =
               await _httpUploadService.uploadPhotos(imagePath);
           Navigator.of(context).pop();
@@ -135,12 +139,18 @@ class DisplayPictureScreen extends StatelessWidget {
 }
 
 class HttpUploadService {
+  String username = '';
+
+  HttpUploadService (this.username);
+
   Future<String> uploadPhotos(List<String> paths) async {
     Uri uri = Uri.parse('http://137.99.130.182');
     http.MultipartRequest request = http.MultipartRequest('POST', uri);
     for (String path in paths) {
       request.files.add(await http.MultipartFile.fromPath('file', path));
     }
+
+    request.fields['username'] = username;
 
     http.StreamedResponse response = await request.send();
     var responseBytes = await response.stream.toBytes();
