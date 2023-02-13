@@ -6,12 +6,12 @@ class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.camera, required this.username});
 
   @override
-  State<HomePage> createState() => FirstRoute(test: camera);
+  State<HomePage> createState() => FirstRoute();
 }
 
 class FirstRoute extends State<HomePage> {
-  FirstRoute({required this.test});
-  final CameraDescription test;
+  FirstRoute();
+
 
   int _selectedIndex = 0;
 
@@ -27,7 +27,7 @@ class FirstRoute extends State<HomePage> {
       body: Center(
         child: [
           Leaderboard(),
-          TakePictureScreen(camera: test),
+          TakePictureScreen(camera: widget.camera, username: widget.username,),
           MStatWid(),
           Settings(),
         ].elementAt(_selectedIndex), //New
