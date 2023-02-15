@@ -117,7 +117,16 @@ class Settings extends StatelessWidget {
   }
 }
 
-class Leaderboard extends StatelessWidget {
+class Leaderboard extends StatefulWidget {
+  const Leaderboard();
+
+  @override
+  State<Leaderboard> createState() {
+    return _Leaderboard();
+  }
+}
+
+class _Leaderboard extends State<Leaderboard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
