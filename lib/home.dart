@@ -1,4 +1,8 @@
 import 'screens.dart';
+import 'package:camera/camera.dart';
+import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class HomePage extends StatefulWidget {
   final CameraDescription camera;
@@ -11,7 +15,6 @@ class HomePage extends StatefulWidget {
 
 class FirstRoute extends State<HomePage> {
   FirstRoute();
-
 
   int _selectedIndex = 0;
 
@@ -27,7 +30,10 @@ class FirstRoute extends State<HomePage> {
       body: Center(
         child: [
           Leaderboard(),
-          TakePictureScreen(camera: widget.camera, username: widget.username,),
+          TakePictureScreen(
+            camera: widget.camera,
+            username: widget.username,
+          ),
           MStatWid(),
           Settings(),
         ].elementAt(_selectedIndex), //New
@@ -72,7 +78,6 @@ class Individual_Statistics extends StatelessWidget {
         title: const Text('Individual Statistics'),
       ),
       body: Center(
-
         child: ElevatedButton(
           onPressed: () {
             //Navigator.push(
@@ -120,6 +125,12 @@ class Settings extends StatelessWidget {
 class Leaderboard extends StatefulWidget {
   const Leaderboard();
 
+  void main() async {
+    String url = "http://sdp23.cse.uconn.edu/leaderboard";
+    final response = await http.get(Uri.parse(url));
+    print(response.body);
+  }
+
   @override
   State<Leaderboard> createState() {
     return _Leaderboard();
@@ -127,6 +138,12 @@ class Leaderboard extends StatefulWidget {
 }
 
 class _Leaderboard extends State<Leaderboard> {
+  @override
+  void initState() {
+    super.initState();
+    widget.main();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
