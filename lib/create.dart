@@ -165,7 +165,7 @@ class _CreatePage extends State<CreatePage> {
 }
 
 Future<bool> createAccount(username, pass) async {
-  Uri uri = Uri.parse('http://137.99.130.182/create');
+  Uri uri = Uri.parse('https://137.99.130.182/create');
   final response = await http.post(uri,
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8'
