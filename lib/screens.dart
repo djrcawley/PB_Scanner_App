@@ -15,3 +15,4 @@ export 'home.dart';
 export 'camera.dart';
 export 'result.dart';
 export 'create.dart';
+export 'package:simple_gradient_text/simple_gradient_text.dart';

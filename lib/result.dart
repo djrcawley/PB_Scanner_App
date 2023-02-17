@@ -35,7 +35,8 @@ class ResultState extends State<Result>
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Results'),
+        title: const Text('Results',
+                            style: TextStyle(fontFamily: 'PrecisionSans', fontSize: 34)),
       ),
       body: Center(
           child: Column(

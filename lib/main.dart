@@ -15,7 +15,7 @@ Future<void> main() async {
     MaterialApp(
       title: 'Navigation Basics',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.blue
       ),
       home: LoginPage(
         // Pass the appropriate camera to the TakePictureScreen widget.

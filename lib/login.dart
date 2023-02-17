@@ -25,7 +25,25 @@ class _LoginPage extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Login'),
+        title: 
+          GradientText(
+           'Login',
+           style: TextStyle(
+             fontFamily: 'PrecisionSans',
+             fontSize: 34,
+           ),
+           gradientType: GradientType.linear,
+           gradientDirection: GradientDirection.ttb,
+           radius: .4,
+           colors: [
+             Color(0xff4052a4),
+             Color(0xffce0a89),
+           ],
+         ),
+         /*
+         const Text('Login',
+                            style: TextStyle(fontFamily: 'PrecisionSans', fontSize: 34)),
+                            */
       ),
       body: Center(
         child: SingleChildScrollView(
