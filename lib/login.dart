@@ -136,7 +136,7 @@ Future<bool> loginRequest(username, pass) async {
   Map<String, String> body = {'username': username, 'password': pass};
   String jsonBody = json.encode(body);
 
-  Uri uri = Uri.parse('http://137.99.130.182/login');
+  Uri uri = Uri.parse('https://137.99.130.182/login');
 
   final encoding = Encoding.getByName('utf-8');
   final header = {

@@ -144,7 +144,7 @@ class HttpUploadService {
   HttpUploadService (this.username);
 
   Future<String> uploadPhotos(List<String> paths) async {
-    Uri uri = Uri.parse('http://137.99.130.182');
+    Uri uri = Uri.parse('https://137.99.130.182');
     http.MultipartRequest request = http.MultipartRequest('POST', uri);
     for (String path in paths) {
       request.files.add(await http.MultipartFile.fromPath('file', path));
