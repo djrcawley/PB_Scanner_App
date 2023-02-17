@@ -126,7 +126,7 @@ class Leaderboard extends StatefulWidget {
   const Leaderboard();
 
   void main() async {
-    String url = "http://sdp23.cse.uconn.edu/leaderboard";
+    String url = "https://sdp23.cse.uconn.edu/leaderboard";
     final response = await http.get(Uri.parse(url));
     print(response.body);
   }
