@@ -122,16 +122,20 @@ class Settings extends StatelessWidget {
   }
 }
 
-var test;
+
+
+List<int> colorCodes = <int>[600, 500, 100];
 
 class Leaderboard extends StatefulWidget {
-  const Leaderboard();
+  Leaderboard();
+
+  
+  var response;
 
   void main() async {
     String url = "https://sdp23.cse.uconn.edu/leaderboard";
-    final response = await http.get(Uri.parse(url));
-    //print(response.body);
-    test = response;
+    response = await http.get(Uri.parse(url));
+    
   }
 
   @override
@@ -143,63 +147,32 @@ class Leaderboard extends StatefulWidget {
 class _Leaderboard extends State<Leaderboard> {
   @override
   void initState() {
-    super.initState();
     widget.main();
-    jsonList();
+    super.initState();
+    buildList();
   }
-[
-  {
-    'username': 'test', 
-    'total_points': 255, 
-    'packages_scanned': 12, 
-    'last_scan': datetime.datetime(2023, 2, 16, 20, 51, 9, 623000), 
-    'daily_streak': 0
-  },
-  {
-    'username': 'yu.ge@uconn.edu', 
-    'total_points': 180, 
-    'packages_scanned': 5, 
-    'last_scan': datetime.datetime(2023, 2, 17, 19, 27, 11, 92000), 
-    'daily_streak': 0
-  },
-  
-  
-   {'username': 'dennis.cawley@uconn.edu', 'total_points': 40, 
-    'packages_scanned': 2, 'last_scan': datetime.datetime(2023, 2, 13, 21, 53, 53, 71000), 
-    'daily_streak': 0}, {'username': 'chenyu.tian@uconn.edu', 'total_points': 20, 
-  'packages_scanned': 1, 'last_scan': datetime.datetime(2023, 2, 17, 18, 53, 3, 601000), 'daily_streak': 0}, {'username': 'demo@uconn.edu', 'total_points': 20, 'packages_scanned': 1, 'last_scan': datetime.datetime(2023, 2, 17, 19, 35, 27, 756000), 'daily_streak': 0}, {'username': 'benjbucci@gmail.com', 'total_points': 0, 'packages_scanned': 0, 'last_scan': datetime.datetime(2023, 2, 16, 20, 32, 0, 662000), 'daily_streak': 0}
-]
 
-  final List<String> entries = <String>[];
-  final List<int> colorCodes = <int>[600, 500, 100];
-  
 
-  void jsonList() async
+  List<dynamic> jsonMap = [];
+  List<String> entries = <String>[];
+
+  void buildList() async 
   {
-    final jsonMap = jsonDecode(test);
-    print(jsonMap);
-    for(var entry in jsonMap.entries)
+    var stringy = widget.response;
+    jsonMap = jsonDecode(stringy.body);
+    for(var i=0; i<jsonMap.length; i++)
     {
-      entries.add(entry.value.toString());
+      entries.add(jsonMap[i].toString());
     }
-    setState(() {});
   }
   
-
 
   @override
   Widget build(BuildContext context) {
 
-    /*
-    return Scaffold(
-        appBar: AppBar(
-          title: const Text('Leaderboard'),
-        ),
-    */
-
     return Scaffold(
       appBar: AppBar(
-          title: const Text('Leaderboard')
+          title: Text('Leaderboard '+entries.length.toString())
       ),
 
       body: ListView.builder(
@@ -208,7 +181,7 @@ class _Leaderboard extends State<Leaderboard> {
         itemBuilder: (BuildContext context, int index) {
           return Container(
             height: 50,
-            color: Colors.amber[colorCodes[index]],
+            color: Colors.amber,
             child: Center(child: Text( '${index+1} Entry ${entries[index]}' )),
           );
         }
