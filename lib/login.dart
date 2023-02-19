@@ -20,6 +20,12 @@ class _LoginPage extends State<LoginPage> {
   final passController = TextEditingController();
 
   var incorrectCredentials = false;
+  bool passwordVisible = false;   
+  void _togglevisibility() {
+    setState(() {
+      passwordVisible = !passwordVisible;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,10 +67,19 @@ class _LoginPage extends State<LoginPage> {
                             const EdgeInsets.only(left: 15, right: 15, top: 15),
                         child: TextFormField(
                             controller: passController,
-                            decoration: const InputDecoration(
-                                border: OutlineInputBorder(),
+                            obscureText: !passwordVisible,
+                            decoration: InputDecoration(
+                                border: const OutlineInputBorder(),
                                 labelText: 'Password',
-                                hintText: 'Enter password'),
+                                hintText: 'Enter password',
+                                suffixIcon: IconButton(onPressed: () {
+                                      _togglevisibility();
+                                    }, icon: Icon(
+                                      passwordVisible ? Icons.visibility : Icons
+                                          .visibility_off, color: Colors.blue,),)
+
+                                
+                                ),
                             validator: (value) {
                               if (value != '' && !incorrectCredentials) {
                                 return null;
@@ -72,7 +87,8 @@ class _LoginPage extends State<LoginPage> {
                                 return '';
                               }
                               return 'Plase enter a password.';
-                            })),
+                            },
+                            )),
                     Padding(
                         padding: const EdgeInsets.only(top: 15),
                         child: Container(

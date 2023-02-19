@@ -30,6 +30,19 @@ class _CreatePage extends State<CreatePage> {
     super.dispose();
   }
 
+  bool _mainPassword = false;
+  bool _secondaryPassword = false;
+  void _togglevisibility(isMain) {
+    setState(() {
+      if(isMain){
+        _mainPassword = !_mainPassword;
+      } else {
+        _secondaryPassword = !_secondaryPassword;
+      }
+      
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -84,10 +97,16 @@ class _CreatePage extends State<CreatePage> {
                             const EdgeInsets.only(left: 15, right: 15, top: 15),
                         child: TextFormField(
                             controller: passController,
-                            decoration: const InputDecoration(
+                            obscureText: !_mainPassword,
+                            decoration: InputDecoration(
                                 border: OutlineInputBorder(),
                                 labelText: 'Password',
-                                hintText: 'Enter password'),
+                                hintText: 'Enter password',
+                                suffixIcon: IconButton(onPressed: () {
+                                      _togglevisibility(true);
+                                    }, icon: Icon(
+                                      _mainPassword ? Icons.visibility : Icons
+                                          .visibility_off, color: Colors.blue,),)),
                             validator: (value) {
                               if (value != '') {
                                 return null;
@@ -99,10 +118,16 @@ class _CreatePage extends State<CreatePage> {
                             const EdgeInsets.only(left: 15, right: 15, top: 15),
                         child: TextFormField(
                             controller: passCheckController,
-                            decoration: const InputDecoration(
+                            obscureText: !_secondaryPassword,
+                            decoration: InputDecoration(
                               border: OutlineInputBorder(),
                               labelText: 'Confirm Password',
                               hintText: 'Re-Enter password',
+                              suffixIcon: IconButton(onPressed: () {
+                                      _togglevisibility(false);
+                                    }, icon: Icon(
+                                      _secondaryPassword ? Icons.visibility : Icons
+                                          .visibility_off, color: Colors.blue,),)
                             ),
                             validator: (value) {
                               if (value == passController.text) {
