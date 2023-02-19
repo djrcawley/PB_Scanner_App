@@ -131,11 +131,10 @@ class Leaderboard extends StatefulWidget {
 
   
   var response;
-
-  void main() async {
+  Future<String> main() async {
     String url = "https://sdp23.cse.uconn.edu/leaderboard";
     response = await http.get(Uri.parse(url));
-    
+    return response.body;
   }
 
   @override
@@ -145,25 +144,27 @@ class Leaderboard extends StatefulWidget {
 }
 
 class _Leaderboard extends State<Leaderboard> {
+
+  var stringy;
+  List<dynamic> jsonMap = [];
+  List<String> entries = <String>[];
+
+
   @override
   void initState() {
-    widget.main();
     super.initState();
     buildList();
   }
 
-
-  List<dynamic> jsonMap = [];
-  List<String> entries = <String>[];
-
   void buildList() async 
   {
-    var stringy = widget.response;
-    jsonMap = jsonDecode(stringy.body);
+    stringy = await widget.main();
+    jsonMap = jsonDecode(stringy);
     for(var i=0; i<jsonMap.length; i++)
     {
       entries.add(jsonMap[i].toString());
     }
+    setState(() { });
   }
   
 
