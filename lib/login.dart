@@ -1,5 +1,6 @@
 import 'screens.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class LoginPage extends StatefulWidget {
   final CameraDescription camera;
@@ -169,6 +170,9 @@ Future<bool> loginRequest(username, pass) async {
 
   var responseDecoded = response.body;
   if (responseDecoded == 'Success') {
+    const storage = FlutterSecureStorage();
+    await storage.write(key: "user", value: username);
+    await storage.write(key: "pass", value: pass);
     return true;
   }
   return false;
