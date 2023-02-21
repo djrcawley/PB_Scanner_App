@@ -1,5 +1,4 @@
 import 'screens.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class LoginPage extends StatefulWidget {
@@ -21,7 +20,7 @@ class _LoginPage extends State<LoginPage> {
   final passController = TextEditingController();
 
   var incorrectCredentials = false;
-  bool passwordVisible = false;   
+  bool passwordVisible = false;
   void _togglevisibility() {
     setState(() {
       passwordVisible = !passwordVisible;
@@ -59,7 +58,7 @@ class _LoginPage extends State<LoginPage> {
                               if (value != '' && !incorrectCredentials) {
                                 return null;
                               } else if (incorrectCredentials == true) {
-                              return 'The username/password is incorrect.';
+                                return 'The username/password is incorrect.';
                               }
                               return 'Plase enter a username.';
                             })),
@@ -67,29 +66,32 @@ class _LoginPage extends State<LoginPage> {
                         padding:
                             const EdgeInsets.only(left: 15, right: 15, top: 15),
                         child: TextFormField(
-                            controller: passController,
-                            obscureText: !passwordVisible,
-                            decoration: InputDecoration(
-                                border: const OutlineInputBorder(),
-                                labelText: 'Password',
-                                hintText: 'Enter password',
-                                suffixIcon: IconButton(onPressed: () {
-                                      _togglevisibility();
-                                    }, icon: Icon(
-                                      passwordVisible ? Icons.visibility : Icons
-                                          .visibility_off, color: Colors.blue,),)
-
-                                
+                          controller: passController,
+                          obscureText: !passwordVisible,
+                          decoration: InputDecoration(
+                              border: const OutlineInputBorder(),
+                              labelText: 'Password',
+                              hintText: 'Enter password',
+                              suffixIcon: IconButton(
+                                onPressed: () {
+                                  _togglevisibility();
+                                },
+                                icon: Icon(
+                                  passwordVisible
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
+                                  color: Colors.blue,
                                 ),
-                            validator: (value) {
-                              if (value != '' && !incorrectCredentials) {
-                                return null;
-                              } else if (incorrectCredentials == true) {
-                                return '';
-                              }
-                              return 'Plase enter a password.';
-                            },
-                            )),
+                              )),
+                          validator: (value) {
+                            if (value != '' && !incorrectCredentials) {
+                              return null;
+                            } else if (incorrectCredentials == true) {
+                              return '';
+                            }
+                            return 'Plase enter a password.';
+                          },
+                        )),
                     Padding(
                         padding: const EdgeInsets.only(top: 15),
                         child: Container(
@@ -101,19 +103,24 @@ class _LoginPage extends State<LoginPage> {
                           child: TextButton(
                             onPressed: () {
                               if (_formKey.currentState!.validate() ||
-                                  (incorrectCredentials == true && userController.text.isNotEmpty && passController.text.isNotEmpty)) {
+                                  (incorrectCredentials == true &&
+                                      userController.text.isNotEmpty &&
+                                      passController.text.isNotEmpty)) {
                                 loginRequest(userController.text,
                                         passController.text)
                                     .then((value) {
                                   if (value == true) {
                                     incorrectCredentials = false;
-                                    Navigator.push(
-                                        context,
+
+                                    Navigator.pushAndRemoveUntil(context,
                                         MaterialPageRoute(
-                                            builder: (_) => HomePage(
-                                                camera: widget.camera,
-                                                username:
-                                                    userController.text)));
+                                            builder: (BuildContext context) {
+                                      return HomePage(
+                                          camera: widget.camera,
+                                          username: userController.text);
+                                    }), (r) {
+                                      return false;
+                                    });
                                   } else {
                                     incorrectCredentials = true;
                                     _formKey.currentState!.validate();

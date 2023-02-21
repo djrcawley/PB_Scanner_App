@@ -1,5 +1,6 @@
 import 'screens.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class CreatePage extends StatefulWidget {
   final CameraDescription camera;
@@ -34,12 +35,11 @@ class _CreatePage extends State<CreatePage> {
   bool _secondaryPassword = false;
   void _togglevisibility(isMain) {
     setState(() {
-      if(isMain){
+      if (isMain) {
         _mainPassword = !_mainPassword;
       } else {
         _secondaryPassword = !_secondaryPassword;
       }
-      
     });
   }
 
@@ -102,11 +102,17 @@ class _CreatePage extends State<CreatePage> {
                                 border: OutlineInputBorder(),
                                 labelText: 'Password',
                                 hintText: 'Enter password',
-                                suffixIcon: IconButton(onPressed: () {
-                                      _togglevisibility(true);
-                                    }, icon: Icon(
-                                      _mainPassword ? Icons.visibility : Icons
-                                          .visibility_off, color: Colors.blue,),)),
+                                suffixIcon: IconButton(
+                                  onPressed: () {
+                                    _togglevisibility(true);
+                                  },
+                                  icon: Icon(
+                                    _mainPassword
+                                        ? Icons.visibility
+                                        : Icons.visibility_off,
+                                    color: Colors.blue,
+                                  ),
+                                )),
                             validator: (value) {
                               if (value != '') {
                                 return null;
@@ -120,15 +126,20 @@ class _CreatePage extends State<CreatePage> {
                             controller: passCheckController,
                             obscureText: !_secondaryPassword,
                             decoration: InputDecoration(
-                              border: OutlineInputBorder(),
-                              labelText: 'Confirm Password',
-                              hintText: 'Re-Enter password',
-                              suffixIcon: IconButton(onPressed: () {
-                                      _togglevisibility(false);
-                                    }, icon: Icon(
-                                      _secondaryPassword ? Icons.visibility : Icons
-                                          .visibility_off, color: Colors.blue,),)
-                            ),
+                                border: OutlineInputBorder(),
+                                labelText: 'Confirm Password',
+                                hintText: 'Re-Enter password',
+                                suffixIcon: IconButton(
+                                  onPressed: () {
+                                    _togglevisibility(false);
+                                  },
+                                  icon: Icon(
+                                    _secondaryPassword
+                                        ? Icons.visibility
+                                        : Icons.visibility_off,
+                                    color: Colors.blue,
+                                  ),
+                                )),
                             validator: (value) {
                               if (value == passController.text) {
                                 return null;
@@ -158,13 +169,16 @@ class _CreatePage extends State<CreatePage> {
                                     .then((value) {
                                   if (value == true) {
                                     existingAccount = false;
-                                    Navigator.push(
-                                        context,
+
+                                    Navigator.pushAndRemoveUntil(context,
                                         MaterialPageRoute(
-                                            builder: (_) => HomePage(
-                                                camera: widget.camera,
-                                                username:
-                                                    userController.text)));
+                                            builder: (BuildContext context) {
+                                      return HomePage(
+                                          camera: widget.camera,
+                                          username: userController.text);
+                                    }), (r) {
+                                      return false;
+                                    });
                                   } else {
                                     existingAccount = true;
                                     _formKey.currentState!.validate();
@@ -200,6 +214,9 @@ Future<bool> createAccount(username, pass) async {
 
   var responseDecoded = response.body;
   if (responseDecoded == 'Success') {
+    const storage = FlutterSecureStorage();
+    await storage.write(key: "user", value: username);
+    await storage.write(key: "pass", value: pass);
     return true;
   }
   return false;
