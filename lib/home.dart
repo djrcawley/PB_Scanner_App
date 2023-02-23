@@ -1,5 +1,5 @@
 import 'screens.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
 
 class HomePage extends StatefulWidget {
   final CameraDescription camera;
@@ -139,79 +139,10 @@ class _Settings extends State<Settings> {
   }
 }
 
-class Leaderboard extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: const Text('Leaderboard'),
-        ),
-        body: ListView(
-          children: <Widget>[
-            ListTile(
-              leading: Text("1",
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.w500,
-                  )),
-              title: Text('Ben Bucci'),
-              subtitle: Text('Points: 600'),
-              trailing: Icon(Icons.keyboard_arrow_right),
-            ),
-            ListTile(
-              leading: Text("2",
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.w500,
-                  )),
-              title: Text("Dennis Cawley"),
-              subtitle: Text('Points: 550'),
-              trailing: Icon(Icons.keyboard_arrow_right),
-            ),
-            ListTile(
-              leading: Text("3",
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.w500,
-                  )),
-              title: Text('Max Serino'),
-              subtitle: Text('Points: 500'),
-              trailing: Icon(Icons.keyboard_arrow_right),
-            ),
-            ListTile(
-              leading: Text("4",
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.w500,
-                  )),
-              title: Text('Aryaman Kulkarni'),
-              subtitle: Text('Points: 300'),
-              trailing: Icon(Icons.keyboard_arrow_right),
-            ),
-            ListTile(
-              leading: Text("5",
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.w500,
-                  )),
-              title: Text('Yu Ge'),
-              subtitle: Text('Points: 200'),
-              trailing: Icon(Icons.keyboard_arrow_right),
-            ),
-            ListTile(
-              leading: Text("6",
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.w500,
-                  )),
-              title: Text('Chenyu Tian'),
-              subtitle: Text('Points: 100'),
-              trailing: Icon(Icons.keyboard_arrow_right),
-            ),
-          ],
-        ));
-  }
-}
+
+
+List<int> colorCodes = <int>[600, 500, 100];
+
 
 class CustomListItem extends StatelessWidget {
   const CustomListItem(
