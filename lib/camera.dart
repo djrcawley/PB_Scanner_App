@@ -5,11 +5,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class TakePictureScreen extends StatefulWidget {
-  const TakePictureScreen({
-    super.key,
-    required this.camera,
-    required this.username
-  });
+  const TakePictureScreen(
+      {super.key, required this.camera, required this.username});
 
   final CameraDescription camera;
   final String username;
@@ -107,32 +104,78 @@ class DisplayPictureScreen extends StatelessWidget {
   final List<String> imagePath;
   final String username;
 
-  const DisplayPictureScreen({super.key, required this.imagePath, required this.username});
+  const DisplayPictureScreen(
+      {super.key, required this.imagePath, required this.username});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Display the Picture')),
+      appBar: AppBar(title: const Text('Review')),
       // The image is stored as a file on the device. Use the `Image.file`
       // constructor with the given path to display the image.
       body: Image.file(File(imagePath.first)),
       //button to upload image
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
           presentLoader(context, text: 'Uploading...');
           // Add your onPressed code here!
-          final HttpUploadService _httpUploadService = HttpUploadService(username);
-          var responseDataHttp =
-              await _httpUploadService.uploadPhotos(imagePath);
-          Navigator.of(context).pop();
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => Result(jsonStr: responseDataHttp)));
-          //await presentAlert(context,
-          //    title: 'Success', message: responseDataHttp);
+          final HttpUploadService _httpUploadService =
+              HttpUploadService(username);
+          try {
+            var responseDataHttp = await _httpUploadService
+                .uploadPhotos(imagePath)
+                .timeout(Duration(seconds: 15));
+            if (responseDataHttp == 'This barcode was already upload') {
+              await presentAlert(context,
+                  title: 'Sorry! :(',
+                  message: "This barcode has already been uploaded");
+              Navigator.of(context).pop();
+              Navigator.of(context).pop();
+              return;
+            } else if (responseDataHttp == "Could extract shipping info") {
+              await presentAlert(context,
+                  title: 'Sorry! :(',
+                  message: "Could not extract shipping info\nPlease try again");
+              Navigator.of(context).pop();
+              Navigator.of(context).pop();
+              return;
+            }
+            //if returns something like {"0":"PointsGained: 60","1":"DailyStreak: 0","2":"Total: 120"}
+            else if (responseDataHttp.contains("PointsGained")) {
+              Map<String, dynamic> jsonMap = jsonDecode(responseDataHttp);
+              String pointsGained = jsonMap["0"].split(": ")[1];
+              String dailyStreak = jsonMap["1"].split(": ")[1];
+              String total = jsonMap["2"].split(": ")[1];
+
+              await presentAlert(context,
+                  title: 'Success!',
+                  message:
+                      "You have gained $pointsGained points\nDaily Streak: $dailyStreak\nTotal: $total");
+              Navigator.of(context).pop();
+              Navigator.of(context).pop();
+              return;
+            }
+          } on TimeoutException {
+            await presentAlert(context,
+                title: 'Sorry! :(',
+                message: "Server is down\nPlease try again later");
+            Navigator.of(context).pop();
+            Navigator.of(context).pop();
+            return;
+          }
+
+          //   Navigator.of(context).pop();
+          //   Navigator.push(
+          //       context,
+          //       MaterialPageRoute(
+          //           builder: (context) => Result(jsonStr: responseDataHttp)));
+          //   //await presentAlert(context,
+          //   //    title: 'Success', message: responseDataHttp);
+          // },
         },
-        child: const Icon(Icons.add),
         backgroundColor: Colors.green,
+        label: Text('Upload'),
+        icon: Icon(Icons.cloud_upload),
       ),
     );
   }
@@ -141,7 +184,7 @@ class DisplayPictureScreen extends StatelessWidget {
 class HttpUploadService {
   String username = '';
 
-  HttpUploadService (this.username);
+  HttpUploadService(this.username);
 
   Future<String> uploadPhotos(List<String> paths) async {
     Uri uri = Uri.parse('https://137.99.130.182');
