@@ -1,8 +1,5 @@
 import 'screens.dart';
-import 'package:camera/camera.dart';
-import 'package:flutter/material.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
+
 
 class HomePage extends StatefulWidget {
   final CameraDescription camera;
@@ -35,7 +32,7 @@ class FirstRoute extends State<HomePage> {
             username: widget.username,
           ),
           MStatWid(),
-          Settings(),
+          Settings(camera: widget.camera),
         ].elementAt(_selectedIndex), //New
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -93,8 +90,21 @@ class Individual_Statistics extends StatelessWidget {
   }
 }
 
-class Settings extends StatelessWidget {
-  const Settings({super.key});
+class Settings extends StatefulWidget {
+  final CameraDescription camera;
+  const Settings({
+    super.key,
+    required this.camera,
+  });
+
+  @override
+  State<Settings> createState() {
+    return _Settings();
+  }
+}
+
+class _Settings extends State<Settings> {
+  final storage = const FlutterSecureStorage();
 
   @override
   Widget build(BuildContext context) {
@@ -114,8 +124,15 @@ class Settings extends StatelessWidget {
         ListTile(
             leading: Icon(Icons.logout_outlined),
             title: Text("Logout"),
-            onTap: () {
-              Navigator.pop(context);
+            onTap: () async {
+              await storage.deleteAll();
+              if (!mounted) return;
+              Navigator.pushAndRemoveUntil(context,
+                  MaterialPageRoute(builder: (BuildContext context) {
+                return LoginPage(camera: widget.camera);
+              }), (r) {
+                return false;
+              });
             }),
       ]),
     );

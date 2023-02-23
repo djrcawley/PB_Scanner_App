@@ -1,3 +1,5 @@
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
 import 'screens.dart';
 
 class MyHttpOverrides extends HttpOverrides{
@@ -20,16 +22,18 @@ Future<void> main() async {
   // Get a specific camera from the list of available cameras.
   final firstCamera = cameras.first;
 
+  const storage = FlutterSecureStorage();
+  String? user = await storage.read(key: 'user');
+
+  Widget nextScreen = (user != null) ? HomePage(camera: firstCamera, username: user) : LoginPage(camera: firstCamera);
+
   runApp(
     MaterialApp(
       title: 'Navigation Basics',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: LoginPage(
-        // Pass the appropriate camera to the TakePictureScreen widget.
-        camera: firstCamera,
-      ),
+      home: nextScreen,
     ),
   );
 }

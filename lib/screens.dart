@@ -1,5 +1,6 @@
 export 'dart:async';
 export 'package:flutter/material.dart';
+export 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 //for camera page
 export 'package:camera/camera.dart';
