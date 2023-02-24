@@ -262,9 +262,9 @@ Future<void> presentAlert(BuildContext context,
       });
 }
 
-Future<void> presentResult(BuildContext context, {required Map<String,dynamic> map,  Function()? ok}) async
+Future<void> presentResult(BuildContext context, {required Map<String,dynamic> map,  Function()? ok})
 {
-  showDialog(
+  return showDialog(
     context: context,
     builder: (context){        
       return AlertDialog(
