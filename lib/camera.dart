@@ -107,6 +107,8 @@ class DisplayPictureScreen extends StatelessWidget {
   const DisplayPictureScreen(
       {super.key, required this.imagePath, required this.username});
 
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -143,14 +145,7 @@ class DisplayPictureScreen extends StatelessWidget {
             //if returns something like {"0":"PointsGained: 60","1":"DailyStreak: 0","2":"Total: 120"}
             else if (responseDataHttp.contains("PointsGained")) {
               Map<String, dynamic> jsonMap = jsonDecode(responseDataHttp);
-              String pointsGained = jsonMap["0"].split(": ")[1];
-              String dailyStreak = jsonMap["1"].split(": ")[1];
-              String total = jsonMap["2"].split(": ")[1];
-
-              await presentAlert(context,
-                  title: 'Success!',
-                  message:
-                      "You have gained $pointsGained points\nDaily Streak: $dailyStreak\nTotal: $total");
+              await presentResult(context, map: jsonMap);
               Navigator.of(context).pop();
               Navigator.of(context).pop();
               return;
@@ -265,4 +260,28 @@ Future<void> presentAlert(BuildContext context,
           ],
         );
       });
+}
+
+Future<void> presentResult(BuildContext context, {required Map<String,dynamic> map,  Function()? ok}) async
+{
+  showDialog(
+    context: context,
+    builder: (context){        
+      return AlertDialog(
+        content: 
+          StatefulBuilder(builder: (context, setState) {
+            return Result(jsonMap: map);
+          }),
+        actions: <Widget>[
+            TextButton(
+              child: Text(
+                'OK',
+                // style: greenText,
+              ),
+              onPressed: ok != null ? ok : Navigator.of(context).pop,
+            ),
+          ],
+      );
+    }
+  );
 }

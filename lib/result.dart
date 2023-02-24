@@ -2,8 +2,8 @@
 import 'screens.dart';
 
 class Result extends StatefulWidget {
-  final String jsonStr;
-  const Result({super.key, required this.jsonStr});
+  final Map<String,dynamic> jsonMap;
+  const Result({super.key, required this.jsonMap});
 
   @override
   State<Result> createState() => ResultState();
@@ -21,8 +21,7 @@ class ResultState extends State<Result>
 
   void buildList() async
   {
-    final jsonMap = jsonDecode(widget.jsonStr);
-    for(var entry in jsonMap.entries)
+    for(var entry in widget.jsonMap.entries)
     {
       await Future.delayed(Duration(seconds: 1));
       displayStr = displayStr + entry.value.toString()+'\n';
@@ -32,19 +31,23 @@ class ResultState extends State<Result>
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Results'),
+        automaticallyImplyLeading: false,
+        title: const Text('Success!'),
       ),
+
       body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget> [
-              Text(displayStr, style: TextStyle(fontSize: 25),textAlign: TextAlign.center,)
-            ], 
-          ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget> [
+            Text(displayStr, style: TextStyle(fontSize: 18),textAlign: TextAlign.center,),
+            Image.asset(height: 100,
+                        width: 100,
+                        'assets/images/box.png')
+          ],
+        ),          
       )
     );
   }
