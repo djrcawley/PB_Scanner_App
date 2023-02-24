@@ -67,6 +67,9 @@ class TakePictureScreenState extends State<TakePictureScreen> {
           // Take the Picture in a try / catch block. If anything goes wrong,
           // catch the error.
           try {
+            String str = "{\"0\":\"Test Info\",\n\"1\":\"test2\"\n}";
+            Map<String, dynamic> test = jsonDecode(str);
+            presentResult(context, map: test);
             List<String> _images = [];
             // Ensure that the camera is initialized.
             await _initializeControllerFuture;
@@ -145,6 +148,8 @@ class DisplayPictureScreen extends StatelessWidget {
             //if returns something like {"0":"PointsGained: 60","1":"DailyStreak: 0","2":"Total: 120"}
             else if (responseDataHttp.contains("PointsGained")) {
               Map<String, dynamic> jsonMap = jsonDecode(responseDataHttp);
+              print("presenting result:");
+              print(jsonMap);
               await presentResult(context, map: jsonMap);
               Navigator.of(context).pop();
               Navigator.of(context).pop();
