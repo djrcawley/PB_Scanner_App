@@ -26,8 +26,9 @@ class _Leaderboard extends State<Leaderboard> {
   }
 
   void buildList() async {
-    var stringy = await widget.main();
-    jsonMap = jsonDecode(stringy);
+    String url = "https://sdp23.cse.uconn.edu/leaderboard";
+    var response = await http.get(Uri.parse(url));
+    jsonMap = jsonDecode(response.body);
     setState(() {});
   }
 
@@ -40,7 +41,7 @@ class _Leaderboard extends State<Leaderboard> {
             mainAxisSize: MainAxisSize.min,
             children: [
               const TopRow(),
-              Divider(),
+              const Divider(indent: 5, endIndent: 5, color: Color.fromARGB(255, 78, 78, 78), thickness: 0.5,),
               ListView.builder(
                 shrinkWrap: true,
                 itemCount: jsonMap.length,
@@ -108,44 +109,30 @@ class TopRow extends StatelessWidget {
           alignment: Alignment.center,
           width: 40,
           height: 30,
-          child: Text('Rank'),
+          child: Text('Rank',
+              style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                  color: Color.fromARGB(255, 78, 78, 78))),
         ),
         SizedBox(width: 90),
-        Container(alignment: Alignment.center, child: Text('Holder')),
+        Container(
+            alignment: Alignment.center,
+            child: Text('Holder',
+                style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                    color: Color.fromARGB(255, 78, 78, 78)))),
         Spacer(),
         Container(
           width: 50,
-          child: Text('Points'),
+          child: Text('Points',
+                style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                    color: Color.fromARGB(255, 78, 78, 78)))
         ),
       ],
-    );
-  }
-}
-
-class DividerWidget extends StatelessWidget {
-  const DividerWidget({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: const <Widget>[
-            // Expanded(
-            //   child: Card(
-            //     child: SizedBox.expand(),
-            //   ),
-            // ),
-            Divider(),
-            // Expanded(
-            //   child: Card(
-            //     child: SizedBox.expand(),
-            //   ),
-            // ),
-          ],
-        ),
-      ),
     );
   }
 }
