@@ -111,7 +111,7 @@ class TopRow extends StatelessWidget {
           child: Text('Rank'),
         ),
         SizedBox(width: 90),
-        Container(alignment: Alignment.center, child: Text('Holder')),
+        Container(alignment: Alignment.center, child: Text('User')),
         Spacer(),
         Container(
           width: 50,
