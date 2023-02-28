@@ -115,7 +115,7 @@ class TopRow extends StatelessWidget {
         Spacer(),
         Container(
           width: 50,
-          child: Text('Points'),
+          child: Text('Point'),
         ),
       ],
     );
