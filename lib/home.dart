@@ -1,6 +1,5 @@
 import 'screens.dart';
 
-
 class HomePage extends StatefulWidget {
   final CameraDescription camera;
   final String username;
@@ -45,8 +44,8 @@ class FirstRoute extends State<HomePage> {
               label: 'Leaderboard',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.camera_alt_outlined),
-              label: 'Camera',
+              icon: Icon(Icons.qr_code_scanner_outlined),
+              label: 'Scan',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.bar_chart),
@@ -139,10 +138,7 @@ class _Settings extends State<Settings> {
   }
 }
 
-
-
 List<int> colorCodes = <int>[600, 500, 100];
-
 
 class CustomListItem extends StatelessWidget {
   const CustomListItem(

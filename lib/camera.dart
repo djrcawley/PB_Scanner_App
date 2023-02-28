@@ -1,7 +1,5 @@
 import 'screens.dart';
-import 'package:camera/camera.dart';
-import 'package:flutter/material.dart';
-import 'dart:convert';
+import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:http/http.dart' as http;
 
 class TakePictureScreen extends StatefulWidget {
@@ -12,168 +10,156 @@ class TakePictureScreen extends StatefulWidget {
   final String username;
 
   @override
-  TakePictureScreenState createState() => TakePictureScreenState();
+  State<StatefulWidget> createState() => _QRViewExampleState();
 }
 
-class TakePictureScreenState extends State<TakePictureScreen> {
-  late CameraController _controller;
-  late Future<void> _initializeControllerFuture;
+class _QRViewExampleState extends State<TakePictureScreen> {
+  Barcode? result;
+  QRViewController? controller;
+  final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
+
+  // In order to get hot reload to work we need to pause the camera if the platform
+  // is android, or resume the camera if the platform is iOS.
+  @override
+  void reassemble() {
+    super.reassemble();
+    if (Platform.isAndroid) {
+      controller!.pauseCamera();
+    }
+    controller!.resumeCamera();
+  }
 
   @override
-  void initState() {
-    super.initState();
-    // To display the current output from the Camera,
-    // create a CameraController.
-    _controller = CameraController(
-      // Get a specific camera from the list of available cameras.
-      widget.camera,
-      // Define the resolution to use.
-      ResolutionPreset.medium,
-    );
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(title: Text('Scan')),
+        body: Center(child: _buildQrView(context)));
+    //print result to console
+  }
 
-    // Next, initialize the controller. This returns a Future.
-    _initializeControllerFuture = _controller.initialize();
+  Widget _buildQrView(BuildContext context) {
+    // For this example we check how width or tall the device is and change the scanArea and overlay accordingly.
+    var scanArea = (MediaQuery.of(context).size.width < 400 ||
+            MediaQuery.of(context).size.height < 400)
+        ? 300.0
+        : 300.0;
+    // To ensure the Scanner view is properly sizes after rotation
+    // we need to listen for Flutter SizeChanged notification and update controller
+    return QRView(
+      key: qrKey,
+      onQRViewCreated: _onQRViewCreated,
+      overlay: QrScannerOverlayShape(
+          borderColor: Colors.red,
+          borderRadius: 10,
+          borderLength: 30,
+          borderWidth: 10,
+          cutOutSize: scanArea),
+      onPermissionSet: (ctrl, p) => _onPermissionSet(context, ctrl, p),
+    );
+  }
+
+  _onQRViewCreated(QRViewController controller) {
+    bool hasExecuted = false;
+    setState(() {
+      this.controller = controller;
+    });
+    controller.scannedDataStream.listen((scanData) async {
+      setState(() {
+        result = scanData;
+      });
+
+      if (result != null && !hasExecuted) {
+        //if format are pdf417, datamatrix and C128
+        if (result!.format == BarcodeFormat.pdf417 ||
+            result!.format == BarcodeFormat.dataMatrix ||
+            result!.format == BarcodeFormat.code128) {
+          hasExecuted = true;
+          presentLoader(context);
+          String encoded = base64Encode(result!.code!.codeUnits);
+          String username = widget.username;
+
+          // Set the flag to true to indicate that the code has been executed
+
+          var results12 =
+              await _sendScannedDataToServer(context, encoded, username);
+          // print("result_code:");
+          // print(result!.code);
+          // print("result_type:");
+          // print(result!.format);
+          Navigator.pop(context);
+          //show result with presentAlert
+          if (results12 == "This barcode was already upload") {
+            await presentAlert(
+              context,
+              title: "Sorry! :(",
+              message: "This barcode has already been scanned",
+            );
+
+            //WAIT 2 SECONDS
+            await Future.delayed(Duration(seconds: 2));
+            hasExecuted = false;
+            //redirect to home
+          } else if (results12 == "Could extract shipping info") {
+            await presentAlert(
+              context,
+              title: "Sorry! :(",
+              message: "Could not extract shipping info, please try again",
+            );
+            //WAIT 2 SECONDS
+            await Future.delayed(Duration(seconds: 2));
+            hasExecuted = false;
+          } else if (results12.contains("PointsGained")) {
+            Map<String, dynamic> jsonMap = jsonDecode(results12);
+            await presentResult(context, map: jsonMap);
+
+            //WAIT 2 SECONDS
+            await Future.delayed(Duration(seconds: 2));
+            hasExecuted = false;
+          }
+        }
+        //else if format are not pdf417, datamatrix and C128
+        else if (result!.format != BarcodeFormat.pdf417 ||
+            result!.format != BarcodeFormat.dataMatrix ||
+            result!.format != BarcodeFormat.code128) {
+          hasExecuted = true;
+          await presentAlert(
+            context,
+            title: "Sorry! :(",
+            message: "This barcode is not supported",
+          );
+          //WAIT 2 SECONDS
+          await Future.delayed(Duration(seconds: 2));
+          hasExecuted = false;
+        }
+      }
+    });
+  }
+
+  void _onPermissionSet(BuildContext context, QRViewController ctrl, bool p) {
+    print('${DateTime.now().toIso8601String()}_onPermissionSet $p');
+    if (!p) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('no Permission')),
+      );
+    }
   }
 
   @override
   void dispose() {
-    // Dispose of the controller when the widget is disposed.
-    _controller.dispose();
+    controller?.dispose();
     super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Take a picture')),
-      // You must wait until the controller is initialized before displaying the
-      // camera preview. Use a FutureBuilder to display a loading spinner until the
-      // controller has finished initializing.
-      body: FutureBuilder<void>(
-        future: _initializeControllerFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            // If the Future is complete, display the preview.
-            return CameraPreview(_controller);
-          } else {
-            // Otherwise, display a loading indicator.
-            return const Center(child: CircularProgressIndicator());
-          }
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        // Provide an onPressed callback.
-        onPressed: () async {
-          // Take the Picture in a try / catch block. If anything goes wrong,
-          // catch the error.
-          try {
-            List<String> _images = [];
-            // Ensure that the camera is initialized.
-            await _initializeControllerFuture;
-
-            // Attempt to take a picture and get the file `image`
-            // where it was saved.
-            final image = await _controller.takePicture();
-            _images.add(image.path);
-            if (!mounted) return;
-
-            // If the picture was taken, display it on a new screen.
-            await Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => DisplayPictureScreen(
-                  // Pass the automatically generated path to
-                  // the DisplayPictureScreen widget.
-                  imagePath: _images,
-                  username: widget.username,
-                ),
-              ),
-            );
-          } catch (e) {
-            // If an error occurs, log the error to the console.
-            print(e);
-          }
-        },
-        child: const Icon(Icons.camera_alt),
-      ),
-    );
   }
 }
 
-// A widget that displays the picture taken by the user.
-class DisplayPictureScreen extends StatelessWidget {
-  final List<String> imagePath;
-  final String username;
+Future<String> _sendScannedDataToServer(
+    context, String encodedData, String username) async {
+  final HttpUploadService _httpUploadService = HttpUploadService(username);
+  //timer to close loader after 15 seconds
 
-  const DisplayPictureScreen(
-      {super.key, required this.imagePath, required this.username});
-
-
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Review')),
-      // The image is stored as a file on the device. Use the `Image.file`
-      // constructor with the given path to display the image.
-      body: Image.file(File(imagePath.first)),
-      //button to upload image
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () async {
-          presentLoader(context, text: 'Uploading...');
-          // Add your onPressed code here!
-          final HttpUploadService _httpUploadService =
-              HttpUploadService(username);
-          try {
-            var responseDataHttp = await _httpUploadService
-                .uploadPhotos(imagePath)
-                .timeout(Duration(seconds: 15));
-            if (responseDataHttp == 'This barcode was already upload') {
-              await presentAlert(context,
-                  title: 'Sorry! :(',
-                  message: "This barcode has already been uploaded");
-              Navigator.of(context).pop();
-              Navigator.of(context).pop();
-              return;
-            } else if (responseDataHttp == "Could extract shipping info") {
-              await presentAlert(context,
-                  title: 'Sorry! :(',
-                  message: "Could not extract shipping info\nPlease try again");
-              Navigator.of(context).pop();
-              Navigator.of(context).pop();
-              return;
-            }
-            //if returns something like {"0":"PointsGained: 60","1":"DailyStreak: 0","2":"Total: 120"}
-            else if (responseDataHttp.contains("PointsGained")) {
-              Map<String, dynamic> jsonMap = jsonDecode(responseDataHttp);
-              await presentResult(context, map: jsonMap);
-              Navigator.of(context).pop();
-              Navigator.of(context).pop();
-              return;
-            }
-          } on TimeoutException {
-            await presentAlert(context,
-                title: 'Sorry! :(',
-                message: "Server is down\nPlease try again later");
-            Navigator.of(context).pop();
-            Navigator.of(context).pop();
-            return;
-          }
-
-          //   Navigator.of(context).pop();
-          //   Navigator.push(
-          //       context,
-          //       MaterialPageRoute(
-          //           builder: (context) => Result(jsonStr: responseDataHttp)));
-          //   //await presentAlert(context,
-          //   //    title: 'Success', message: responseDataHttp);
-          // },
-        },
-        backgroundColor: Colors.green,
-        label: Text('Upload'),
-        icon: Icon(Icons.cloud_upload),
-      ),
-    );
-  }
+  var responseDataHttp =
+      await _httpUploadService.uploadEncodedData(encodedData);
+  // print(responseDataHttp);
+  return responseDataHttp;
 }
 
 class HttpUploadService {
@@ -181,42 +167,49 @@ class HttpUploadService {
 
   HttpUploadService(this.username);
 
-  Future<String> uploadPhotos(List<String> paths) async {
+  Future<String> uploadEncodedData(String encodedData) async {
     Uri tokenUrl = Uri.parse('https://137.99.130.182/token');
     final hour = DateTime.now().toUtc().hour.toString();
-    var bytes = utf8.encode(username+hour);
+    var bytes = utf8.encode(username + hour);
     final String userHash = sha256.convert(bytes).toString();
     final responseToken = await http.post(tokenUrl,
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8'
-      },
-      body:
-          jsonEncode(<String, String>{'username': username, 'key': userHash}));
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8'
+        },
+        body: jsonEncode(
+            <String, String>{'username': username, 'key': userHash}));
     final token = jsonDecode(responseToken.body)['token'];
-
+    // print("TOKEN:");
+    // print(token);
+    // print("encodedData:");
+    // print(encodedData);
 
     Uri uri = Uri.parse('https://137.99.130.182');
-    http.MultipartRequest request = http.MultipartRequest('POST', uri);
-    for (String path in paths) {
-      request.files.add(await http.MultipartFile.fromPath('file', path));
-    }
+    //not multipartrequest
+    final responseUpload = await http.post(uri,
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8'
+        },
+        body: jsonEncode(<String, String>{
+          'username': username,
+          'token': token,
+          'encodedData': encodedData
+        }));
 
-    request.fields['username'] = username;
-    request.fields['token'] = token;
+    //get response
+    var responseBytes = responseUpload.bodyBytes;
 
-    http.StreamedResponse response = await request.send();
-    var responseBytes = await response.stream.toBytes();
     var responseString = utf8.decode(responseBytes);
-    print('\n\n');
-    print('RESPONSE WITH HTTP');
-    print(responseString);
-    print('\n\n');
+    // print('\n\n');
+    // print('RESPONSE WITH HTTP');
+    // print(responseString);
+    // print('\n\n');
     return responseString;
   }
 }
 
 void presentLoader(BuildContext context,
-    {String text = 'Aguarde...',
+    {String text = 'Uploading...',
     bool barrierDismissible = false,
     bool willPop = true}) {
   showDialog(
@@ -276,26 +269,25 @@ Future<void> presentAlert(BuildContext context,
       });
 }
 
-Future<void> presentResult(BuildContext context, {required Map<String,dynamic> map,  Function()? ok})
-{
+Future<void> presentResult(BuildContext context,
+    {required Map<String, dynamic> map, Function()? ok}) {
   return showDialog(
-    context: context,
-    builder: (context){        
-      return AlertDialog(
-        content: 
-          StatefulBuilder(builder: (context, setState) {
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          content: StatefulBuilder(builder: (context, setState) {
             return Result(jsonMap: map);
           }),
-        actions: <Widget>[
+          actions: <Widget>[
             TextButton(
               child: Text(
                 'OK',
                 // style: greenText,
               ),
+              //return to home
               onPressed: ok != null ? ok : Navigator.of(context).pop,
             ),
           ],
-      );
-    }
-  );
+        );
+      });
 }
