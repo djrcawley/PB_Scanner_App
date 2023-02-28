@@ -1,5 +1,5 @@
 import 'screens.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
 
 class LoginPage extends StatefulWidget {
   final CameraDescription camera;
@@ -157,7 +157,9 @@ class _LoginPage extends State<LoginPage> {
 }
 
 Future<bool> loginRequest(username, pass) async {
-  Map<String, String> body = {'username': username, 'password': pass};
+  var bytes = utf8.encode(pass);
+  final String pwh = sha256.convert(bytes).toString();
+  Map<String, String> body = {'username': username, 'password': pwh};
   String jsonBody = json.encode(body);
 
   Uri uri = Uri.parse('https://137.99.130.182/login');
