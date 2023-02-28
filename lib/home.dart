@@ -1,6 +1,5 @@
 import 'screens.dart';
 
-
 class HomePage extends StatefulWidget {
   final CameraDescription camera;
   final String username;
@@ -26,7 +25,7 @@ class FirstRoute extends State<HomePage> {
     return Scaffold(
       body: Center(
         child: [
-          Leaderboard(),
+          TabBarDemo(),
           TakePictureScreen(
             camera: widget.camera,
             username: widget.username,
@@ -139,10 +138,7 @@ class _Settings extends State<Settings> {
   }
 }
 
-
-
 List<int> colorCodes = <int>[600, 500, 100];
-
 
 class CustomListItem extends StatelessWidget {
   const CustomListItem(
