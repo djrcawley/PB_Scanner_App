@@ -25,7 +25,7 @@ class FirstRoute extends State<HomePage> {
     return Scaffold(
       body: Center(
         child: [
-          Leaderboard(),
+          TabBarDemo(),
           TakePictureScreen(
             camera: widget.camera,
             username: widget.username,
