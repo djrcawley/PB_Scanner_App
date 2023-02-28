@@ -182,6 +182,19 @@ class HttpUploadService {
   HttpUploadService(this.username);
 
   Future<String> uploadPhotos(List<String> paths) async {
+    Uri tokenUrl = Uri.parse('https://137.99.130.182/token');
+    final hour = DateTime.now().toUtc().hour.toString();
+    var bytes = utf8.encode(username+hour);
+    final String userHash = sha256.convert(bytes).toString();
+    final responseToken = await http.post(tokenUrl,
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8'
+      },
+      body:
+          jsonEncode(<String, String>{'username': username, 'key': userHash}));
+    final token = jsonDecode(responseToken.body)['token'];
+
+
     Uri uri = Uri.parse('https://137.99.130.182');
     http.MultipartRequest request = http.MultipartRequest('POST', uri);
     for (String path in paths) {
@@ -189,6 +202,7 @@ class HttpUploadService {
     }
 
     request.fields['username'] = username;
+    request.fields['token'] = token;
 
     http.StreamedResponse response = await request.send();
     var responseBytes = await response.stream.toBytes();
