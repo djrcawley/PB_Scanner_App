@@ -49,7 +49,7 @@ class _QRViewExampleState extends State<TakePictureScreen> {
       key: qrKey,
       onQRViewCreated: _onQRViewCreated,
       overlay: QrScannerOverlayShape(
-          borderColor: Colors.red,
+          borderColor: Colors.white,
           borderRadius: 10,
           borderLength: 30,
           borderWidth: 10,
@@ -69,53 +69,69 @@ class _QRViewExampleState extends State<TakePictureScreen> {
       });
 
       if (result != null && !hasExecuted) {
-        //if format are pdf417, datamatrix and C128
+        //accepted formats
         if (result!.format == BarcodeFormat.pdf417 ||
             result!.format == BarcodeFormat.dataMatrix ||
             result!.format == BarcodeFormat.code128) {
+          // Set the flag to true to indicate that the code has been executed
           hasExecuted = true;
+
           presentLoader(context);
           String encoded = base64Encode(result!.code!.codeUnits);
           String username = widget.username;
 
-          // Set the flag to true to indicate that the code has been executed
+          try {
+            var results12 =
+                await _sendScannedDataToServer(context, encoded, username)
+                    .timeout(Duration(seconds: 15));
 
-          var results12 =
-              await _sendScannedDataToServer(context, encoded, username);
-          // print("result_code:");
-          // print(result!.code);
-          // print("result_type:");
-          // print(result!.format);
-          Navigator.pop(context);
-          //show result with presentAlert
-          if (results12 == "This barcode was already upload") {
+            Navigator.pop(context);
+            //show result with presentAlert
+            if (results12 == "This barcode was already upload") {
+              await presentAlert(
+                context,
+                title: "Sorry! :(",
+                message: "This barcode has already been scanned",
+              );
+
+              //WAIT 2 SECONDS
+              await Future.delayed(Duration(seconds: 2));
+              hasExecuted = false;
+              //redirect to home
+            } else if (results12 == "Could extract shipping info") {
+              await presentAlert(
+                context,
+                title: "Sorry! :(",
+                message: "Could not extract shipping info, please try again",
+              );
+              //WAIT 2 SECONDS
+              await Future.delayed(Duration(seconds: 2));
+              hasExecuted = false;
+            } else if (results12.contains("PointsGained")) {
+              Map<String, dynamic> jsonMap = jsonDecode(results12);
+              await presentResult(context, map: jsonMap);
+
+              //WAIT 2 SECONDS
+              await Future.delayed(Duration(seconds: 2));
+              hasExecuted = false;
+            }
+          } catch (e) {
+            Navigator.pop(context);
             await presentAlert(
               context,
               title: "Sorry! :(",
-              message: "This barcode has already been scanned",
+              message: "Could not connect to server, please try later",
             );
-
-            //WAIT 2 SECONDS
-            await Future.delayed(Duration(seconds: 2));
-            hasExecuted = false;
-            //redirect to home
-          } else if (results12 == "Could extract shipping info") {
-            await presentAlert(
-              context,
-              title: "Sorry! :(",
-              message: "Could not extract shipping info, please try again",
-            );
-            //WAIT 2 SECONDS
-            await Future.delayed(Duration(seconds: 2));
-            hasExecuted = false;
-          } else if (results12.contains("PointsGained")) {
-            Map<String, dynamic> jsonMap = jsonDecode(results12);
-            await presentResult(context, map: jsonMap);
-
             //WAIT 2 SECONDS
             await Future.delayed(Duration(seconds: 2));
             hasExecuted = false;
           }
+
+          // print("result_code:");
+          // print(result!.code);
+          // print("result_type:");
+          // print(result!.format);
+
         }
         //else if format are not pdf417, datamatrix and C128
         else if (result!.format != BarcodeFormat.pdf417 ||
@@ -158,6 +174,7 @@ Future<String> _sendScannedDataToServer(
 
   var responseDataHttp =
       await _httpUploadService.uploadEncodedData(encodedData);
+
   // print(responseDataHttp);
   return responseDataHttp;
 }
@@ -172,12 +189,16 @@ class HttpUploadService {
     final hour = DateTime.now().toUtc().hour.toString();
     var bytes = utf8.encode(username + hour);
     final String userHash = sha256.convert(bytes).toString();
+
+    //if no response for 15 seconds, close loader
+
     final responseToken = await http.post(tokenUrl,
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8'
         },
         body: jsonEncode(
             <String, String>{'username': username, 'key': userHash}));
+
     final token = jsonDecode(responseToken.body)['token'];
     // print("TOKEN:");
     // print(token);
