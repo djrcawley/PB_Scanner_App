@@ -1,6 +1,5 @@
 import 'screens.dart';
 
-
 class LoginPage extends StatefulWidget {
   final CameraDescription camera;
   const LoginPage({
