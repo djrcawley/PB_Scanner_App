@@ -204,19 +204,21 @@ class _CreatePage extends State<CreatePage> {
 }
 
 Future<bool> createAccount(username, pass) async {
+  var bytes = utf8.encode(pass);
+  final String pwh = sha256.convert(bytes).toString();
   Uri uri = Uri.parse('https://137.99.130.182/create');
   final response = await http.post(uri,
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8'
       },
       body:
-          jsonEncode(<String, String>{'username': username, 'password': pass}));
+          jsonEncode(<String, String>{'username': username, 'password': pwh}));
 
   var responseDecoded = response.body;
   if (responseDecoded == 'Success') {
     const storage = FlutterSecureStorage();
     await storage.write(key: "user", value: username);
-    await storage.write(key: "pass", value: pass);
+    await storage.write(key: "pass", value: pwh);
     return true;
   }
   return false;
