@@ -174,8 +174,12 @@ class _Leaderboard2 extends State<Leaderboard2> {
             icon: const Icon(Icons.groups_2),
             backgroundColor: Colors.blue,
             onPressed: () {
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => JoinPage(username: widget.username,)));
+              Navigator.push(context, MaterialPageRoute(builder: (context) => JoinPage(username: widget.username,))).then((value) {
+                  setState(() {
+                    // refresh state of Page1
+                    buildTeam();
+                  });
+                });
             }),
         body: Column(mainAxisSize: MainAxisSize.min, children: [
           const TopRow(),
