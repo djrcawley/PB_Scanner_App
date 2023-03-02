@@ -290,8 +290,8 @@ class JoinPage extends StatefulWidget {
 
 class _JoinPage extends State<JoinPage> {
   final _formKey = GlobalKey<FormState>();
+  final teamController = TextEditingController();
   final userController = TextEditingController();
-  final passController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -319,11 +319,11 @@ class _JoinPage extends State<JoinPage> {
                             padding: const EdgeInsets.only(
                                 left: 15, right: 15, top: 15),
                             child: TextFormField(
-                                controller: passController,
+                                controller: teamController,
                                 decoration: InputDecoration(
                                     border: OutlineInputBorder(),
                                     labelText: 'Team',
-                                    hintText: 'Enter Enter'))),
+                                    hintText: 'Enter team'))),
                         Padding(
                             padding: const EdgeInsets.only(top: 15),
                             child: Container(
@@ -333,7 +333,10 @@ class _JoinPage extends State<JoinPage> {
                                   color: Colors.blue,
                                   borderRadius: BorderRadius.circular(20)),
                               child: TextButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  Join(
+                                      userController.text, teamController.text);
+                                },
                                 child: const Text(
                                   'Join',
                                   style: TextStyle(
@@ -344,4 +347,20 @@ class _JoinPage extends State<JoinPage> {
                       ],
                     )))));
   }
+}
+
+Future<bool> Join(username, team) async {
+  Uri uri = Uri.parse('https://sdp23.cse.uconn.edu/add-member');
+  final response = await http.post(uri,
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8'
+      },
+      body: jsonEncode(
+          <String, String>{'username': username, 'team_name': team}));
+
+  var responseDecoded = response.body;
+  const storage = FlutterSecureStorage();
+  await storage.write(key: "user", value: username);
+  await storage.write(key: "team", value: team);
+  return true;
 }
