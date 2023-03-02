@@ -299,6 +299,8 @@ class JoinPage extends StatefulWidget {
 class _JoinPage extends State<JoinPage> {
   final _formKey = GlobalKey<FormState>();
   final teamController = TextEditingController();
+  bool inTeam = false;
+  bool nonExistantTeam = false;
 
   @override
   Widget build(BuildContext context) {
@@ -322,7 +324,15 @@ class _JoinPage extends State<JoinPage> {
                                     border: OutlineInputBorder(),
                                     prefixIcon: Icon(Icons.group),
                                     labelText: 'Team Name',
-                                    hintText: 'Enter team'))),
+                                    hintText: 'Enter team'),
+                            validator: (value) {
+                            if (value != '' && !inTeam && !nonExistantTeam) {
+                              return null;
+                            } else if (inTeam == true) {
+                              return 'Already in a team.';
+                            }
+                            return 'The team does not exist.';
+                          },)),
                         Padding(
                             padding: const EdgeInsets.only(top: 15),
                             child: Container(
@@ -333,10 +343,19 @@ class _JoinPage extends State<JoinPage> {
                                   borderRadius: BorderRadius.circular(20)),
                               child: TextButton(
                                 onPressed: () async {
-                                  final joined = await joinTeam(widget.username, teamController.text);
-                                  if(joined == true){
-                                    Navigator.pop(context);
+                                  
+                                  joinTeam(widget.username, teamController.text).then((value) => {
+                                    if(value == 'Success'){
+                                    Navigator.pop(context)
+                                  } else if (value == 'You are already in a team.'){
+                                    inTeam = true,
+                                    _formKey.currentState!.validate()
+                                  } else {
+                                    nonExistantTeam = true,
+                                    _formKey.currentState!.validate()
                                   }
+                                  });
+                                  
                                 },
                                 child: const Text(
                                   'Join',
@@ -350,7 +369,7 @@ class _JoinPage extends State<JoinPage> {
   }
 }
 
-Future<bool> joinTeam(username, team) async {
+Future<String> joinTeam(username, team) async {
   Uri uri = Uri.parse('https://sdp23.cse.uconn.edu/add-member');
   final response = await http.post(uri,
       headers: <String, String>{
@@ -359,8 +378,5 @@ Future<bool> joinTeam(username, team) async {
       body: jsonEncode(
           <String, String>{'username': username, 'team_name': team}));
 
-  var responseDecoded = response.body;
-  const storage = FlutterSecureStorage();
-  await storage.write(key: "team", value: team);
-  return true;
+  return response.body;
 }
