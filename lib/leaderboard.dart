@@ -69,7 +69,7 @@ class _Leaderboard extends State<Leaderboard> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: Column(mainAxisSize: MainAxisSize.min, children: [
-      const TopRow(),
+      const TopRow(middleText: 'User'),
       const Divider(
         indent: 5,
         endIndent: 5,
@@ -182,7 +182,7 @@ class _Leaderboard2 extends State<Leaderboard2> {
                 });
             }),
         body: Column(mainAxisSize: MainAxisSize.min, children: [
-          const TopRow(),
+          const TopRow(middleText: 'Team'),
           const Divider(
             indent: 5,
             endIndent: 5,
@@ -249,7 +249,8 @@ class _Leaderboard2 extends State<Leaderboard2> {
 }
 
 class TopRow extends StatelessWidget {
-  const TopRow({super.key});
+  final String middleText;
+  const TopRow({super.key, required this.middleText});
 
   @override
   Widget build(BuildContext context) {
@@ -268,8 +269,8 @@ class TopRow extends StatelessWidget {
         const SizedBox(width: 90),
         Container(
             alignment: Alignment.center,
-            child: const Text('Team',
-                style: TextStyle(
+            child: Text(middleText,
+                style: const TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w500,
                     color: Color.fromARGB(255, 78, 78, 78)))),
@@ -343,7 +344,7 @@ class _JoinPage extends State<JoinPage> {
                                   borderRadius: BorderRadius.circular(20)),
                               child: TextButton(
                                 onPressed: () async {
-                                  
+
                                   joinTeam(widget.username, teamController.text).then((value) => {
                                     if(value == 'Success'){
                                     Navigator.pop(context)
