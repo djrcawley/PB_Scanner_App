@@ -25,7 +25,7 @@ class FirstRoute extends State<HomePage> {
     return Scaffold(
       body: Center(
         child: [
-          TabBarDemo(),
+          TeamTabBar(username: widget.username),
           TakePictureScreen(
             camera: widget.camera,
             username: widget.username,
