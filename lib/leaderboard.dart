@@ -1,8 +1,9 @@
 import 'screens.dart';
 import 'package:http/http.dart' as http;
 
-class TabBarDemo extends StatelessWidget {
-  const TabBarDemo({super.key});
+class TeamTabBar extends StatelessWidget {
+  final String username;
+  const TeamTabBar({super.key, required this.username});
 
   @override
   Widget build(BuildContext context) {
@@ -19,10 +20,11 @@ class TabBarDemo extends StatelessWidget {
               ],
             ),
           ),
-          body: const TabBarView(
+          body: TabBarView(
+            physics: NeverScrollableScrollPhysics(),
             children: [
-              Leaderboard(),
-              Leaderboard2(),
+              const Leaderboard(),
+              Leaderboard2(username: username),
             ],
           ),
         ),
@@ -133,7 +135,8 @@ class _Leaderboard extends State<Leaderboard> {
 }
 
 class Leaderboard2 extends StatefulWidget {
-  const Leaderboard2({super.key});
+  final String username;
+  const Leaderboard2({super.key, required this.username});
 
   Future<String> main() async {
     String url = "https://sdp23.cse.uconn.edu/team-leaderboard";
@@ -149,14 +152,13 @@ class Leaderboard2 extends StatefulWidget {
 
 class _Leaderboard2 extends State<Leaderboard2> {
   List<dynamic> jsonMap = [];
-
   @override
   void initState() {
     super.initState();
-    buildList();
+    buildTeam();
   }
 
-  Future<bool> buildList() async {
+  Future<bool> buildTeam() async {
     String url = "https://sdp23.cse.uconn.edu/team-leaderboard";
     var response = await http.get(Uri.parse(url));
     jsonMap = jsonDecode(response.body);
@@ -173,7 +175,7 @@ class _Leaderboard2 extends State<Leaderboard2> {
             backgroundColor: Colors.blue,
             onPressed: () {
               Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => JoinPage()));
+                  context, MaterialPageRoute(builder: (context) => JoinPage(username: widget.username,)));
             }),
         body: Column(mainAxisSize: MainAxisSize.min, children: [
           const TopRow(),
@@ -186,7 +188,7 @@ class _Leaderboard2 extends State<Leaderboard2> {
           Expanded(
               child: RefreshIndicator(
                   onRefresh: () {
-                    return buildList();
+                    return buildTeam();
                   },
                   child: ListView.builder(
                       shrinkWrap: true,
@@ -194,11 +196,12 @@ class _Leaderboard2 extends State<Leaderboard2> {
                       itemCount: jsonMap.length,
                       itemBuilder: (context, index) {
                         return Card(
+                          color: (jsonMap[index]['Members'].contains(widget.username)) ? Color.fromARGB(255, 224, 224, 224): const Color(0xfffafafa),
                           child: ListTile(
                             // Rank
                             leading: Text(
                               (index + 1).toString(),
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 20.0,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -261,7 +264,7 @@ class TopRow extends StatelessWidget {
         const SizedBox(width: 90),
         Container(
             alignment: Alignment.center,
-            child: const Text('Holder',
+            child: const Text('Team',
                 style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w500,
@@ -280,7 +283,8 @@ class TopRow extends StatelessWidget {
 }
 
 class JoinPage extends StatefulWidget {
-  const JoinPage({super.key});
+  final String username;
+  const JoinPage({super.key, required this.username});
 
   @override
   State<JoinPage> createState() {
@@ -291,11 +295,11 @@ class JoinPage extends StatefulWidget {
 class _JoinPage extends State<JoinPage> {
   final _formKey = GlobalKey<FormState>();
   final teamController = TextEditingController();
-  final userController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return 
+    Scaffold(
         appBar: AppBar(
           title: const Text('Join Team'),
         ),
@@ -309,20 +313,11 @@ class _JoinPage extends State<JoinPage> {
                             padding: const EdgeInsets.only(
                                 left: 15, right: 15, top: 15),
                             child: TextFormField(
-                              controller: userController,
-                              decoration: const InputDecoration(
-                                  border: OutlineInputBorder(),
-                                  labelText: 'Username',
-                                  hintText: 'Enter Username'),
-                            )),
-                        Padding(
-                            padding: const EdgeInsets.only(
-                                left: 15, right: 15, top: 15),
-                            child: TextFormField(
                                 controller: teamController,
-                                decoration: InputDecoration(
+                                decoration: const InputDecoration(
                                     border: OutlineInputBorder(),
-                                    labelText: 'Team',
+                                    prefixIcon: Icon(Icons.group),
+                                    labelText: 'Team Name',
                                     hintText: 'Enter team'))),
                         Padding(
                             padding: const EdgeInsets.only(top: 15),
@@ -333,9 +328,11 @@ class _JoinPage extends State<JoinPage> {
                                   color: Colors.blue,
                                   borderRadius: BorderRadius.circular(20)),
                               child: TextButton(
-                                onPressed: () {
-                                  Join(
-                                      userController.text, teamController.text);
+                                onPressed: () async {
+                                  final joined = await joinTeam(widget.username, teamController.text);
+                                  if(joined == true){
+                                    Navigator.pop(context);
+                                  }
                                 },
                                 child: const Text(
                                   'Join',
@@ -349,7 +346,7 @@ class _JoinPage extends State<JoinPage> {
   }
 }
 
-Future<bool> Join(username, team) async {
+Future<bool> joinTeam(username, team) async {
   Uri uri = Uri.parse('https://sdp23.cse.uconn.edu/add-member');
   final response = await http.post(uri,
       headers: <String, String>{
@@ -360,7 +357,6 @@ Future<bool> Join(username, team) async {
 
   var responseDecoded = response.body;
   const storage = FlutterSecureStorage();
-  await storage.write(key: "user", value: username);
   await storage.write(key: "team", value: team);
   return true;
 }
