@@ -70,12 +70,6 @@ class _Leaderboard extends State<Leaderboard> {
     return Scaffold(
         body: Column(mainAxisSize: MainAxisSize.min, children: [
       const TopRow(middleText: 'User'),
-      const Divider(
-        indent: 5,
-        endIndent: 5,
-        color: Color.fromARGB(255, 78, 78, 78),
-        thickness: 0.5,
-      ),
       Expanded(
           child: RefreshIndicator(
               onRefresh: () {
@@ -183,12 +177,6 @@ class _Leaderboard2 extends State<Leaderboard2> {
             }),
         body: Column(mainAxisSize: MainAxisSize.min, children: [
           const TopRow(middleText: 'Team'),
-          const Divider(
-            indent: 5,
-            endIndent: 5,
-            color: Color.fromARGB(255, 78, 78, 78),
-            thickness: 0.5,
-          ),
           Expanded(
               child: RefreshIndicator(
                   onRefresh: () {
@@ -254,35 +242,40 @@ class TopRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return 
+    Container(
+      color: Color.fromARGB(171, 194, 193, 193),
+      child:
+    Row(
       children: [
         Container(
           alignment: Alignment.center,
-          width: 40,
+          width: 70,
           height: 30,
           child: const Text('Rank',
               style: TextStyle(
-                  fontSize: 15,
+                  fontSize: 17,
                   fontWeight: FontWeight.w500,
                   color: Color.fromARGB(255, 78, 78, 78))),
         ),
-        const SizedBox(width: 90),
+        const SizedBox(width: 70),
         Container(
             alignment: Alignment.center,
             child: Text(middleText,
                 style: const TextStyle(
-                    fontSize: 15,
+                    fontSize: 17,
                     fontWeight: FontWeight.w500,
                     color: Color.fromARGB(255, 78, 78, 78)))),
         const Spacer(),
         const SizedBox(
-            width: 50,
+            width: 70,
             child: Text('Points',
                 style: TextStyle(
-                    fontSize: 15,
+                    fontSize: 17,
                     fontWeight: FontWeight.w500,
                     color: Color.fromARGB(255, 78, 78, 78)))),
       ],
+    )
     );
   }
 }
