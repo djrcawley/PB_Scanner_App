@@ -1,5 +1,6 @@
 import 'screens.dart';
 import 'package:http/http.dart' as http;
+import 'package:simple_autocomplete_formfield/simple_autocomplete_formfield.dart';
 
 class TeamTabBar extends StatelessWidget {
   final String username;
@@ -300,10 +301,31 @@ class _JoinPage extends State<JoinPage> {
   final teamController = TextEditingController();
   bool inTeam = false;
   bool nonExistantTeam = false;
+  //team names
+
+  List<String> teamNames = [];
+  buildTeam() async {
+    String url = "https://sdp23.cse.uconn.edu/team-leaderboard";
+    var response = await http.get(Uri.parse(url));
+    List<dynamic> jsonMap = jsonDecode(response.body);
+    // setState(() {});
+    return jsonMap;
+  }
+
+  buildTeamNames() async {
+    List<dynamic> jsonMap = await buildTeam();
+    for (int i = 0; i < jsonMap.length; i++) {
+      teamNames.add(jsonMap[i]['Team_Names']);
+    }
+    print(teamNames);
+    return teamNames;
+  }
 
   @override
   Widget build(BuildContext context) {
+    buildTeamNames();
     return Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           title: const Text('Join Team'),
         ),
@@ -316,13 +338,25 @@ class _JoinPage extends State<JoinPage> {
                         Padding(
                             padding: const EdgeInsets.only(
                                 left: 15, right: 15, top: 15),
-                            child: TextFormField(
+                            //how to add autocomplete to TextFormField?
+
+                            child: SimpleAutocompleteFormField<String>(
                               controller: teamController,
                               decoration: const InputDecoration(
                                   border: OutlineInputBorder(),
                                   prefixIcon: Icon(Icons.group),
                                   labelText: 'Team Name',
                                   hintText: 'Enter team'),
+                              itemBuilder: (context, item) => Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Text(item!),
+                              ),
+                              suggestionsHeight: 100,
+                              onSearch: (search) async => teamNames
+                                  .where((team) => team
+                                      .toLowerCase()
+                                      .contains(search.toLowerCase()))
+                                  .toList(),
                               validator: (value) {
                                 if (value != '' &&
                                     !inTeam &&
