@@ -1,5 +1,6 @@
 import 'screens.dart';
 import 'package:http/http.dart' as http;
+import 'package:simple_autocomplete_formfield/simple_autocomplete_formfield.dart';
 
 class TeamTabBar extends StatelessWidget {
   final String username;
@@ -16,7 +17,7 @@ class TeamTabBar extends StatelessWidget {
             bottom: const TabBar(
               tabs: [
                 Tab(icon: Icon(Icons.person)),
-                Tab(icon: Icon(Icons.groups_2)),
+                Tab(icon: Icon(Icons.groups)),
               ],
             ),
           ),
@@ -165,15 +166,20 @@ class _Leaderboard2 extends State<Leaderboard2> {
     return Scaffold(
         floatingActionButton: FloatingActionButton.extended(
             label: const Text('Join'),
-            icon: const Icon(Icons.groups_2),
+            icon: const Icon(Icons.groups),
             backgroundColor: Colors.blue,
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => JoinPage(username: widget.username,))).then((value) {
-                  setState(() {
-                    // refresh state of Page1
-                    buildTeam();
-                  });
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => JoinPage(
+                            username: widget.username,
+                          ))).then((value) {
+                setState(() {
+                  // refresh state of Page1
+                  buildTeam();
                 });
+              });
             }),
         body: Column(mainAxisSize: MainAxisSize.min, children: [
           const TopRow(middleText: 'Team'),
@@ -188,7 +194,10 @@ class _Leaderboard2 extends State<Leaderboard2> {
                       itemCount: jsonMap.length,
                       itemBuilder: (context, index) {
                         return Card(
-                          color: (jsonMap[index]['Members'].contains(widget.username)) ? Color.fromARGB(255, 224, 224, 224): const Color(0xfffafafa),
+                          color: (jsonMap[index]['Members']
+                                  .contains(widget.username))
+                              ? Color.fromARGB(255, 224, 224, 224)
+                              : const Color(0xfffafafa),
                           child: ListTile(
                             // Rank
                             leading: Text(
@@ -242,41 +251,38 @@ class TopRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return 
-    Container(
-      color: Color.fromARGB(171, 194, 193, 193),
-      child:
-    Row(
-      children: [
-        Container(
-          alignment: Alignment.center,
-          width: 70,
-          height: 30,
-          child: const Text('Rank',
-              style: TextStyle(
-                  fontSize: 17,
-                  fontWeight: FontWeight.w500,
-                  color: Color.fromARGB(255, 78, 78, 78))),
-        ),
-        const SizedBox(width: 70),
-        Container(
-            alignment: Alignment.center,
-            child: Text(middleText,
-                style: const TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.w500,
-                    color: Color.fromARGB(255, 78, 78, 78)))),
-        const Spacer(),
-        const SizedBox(
-            width: 70,
-            child: Text('Points',
-                style: TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.w500,
-                    color: Color.fromARGB(255, 78, 78, 78)))),
-      ],
-    )
-    );
+    return Container(
+        color: Color.fromARGB(171, 194, 193, 193),
+        child: Row(
+          children: [
+            Container(
+              alignment: Alignment.center,
+              width: 70,
+              height: 30,
+              child: const Text('Rank',
+                  style: TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w500,
+                      color: Color.fromARGB(255, 78, 78, 78))),
+            ),
+            const SizedBox(width: 70),
+            Container(
+                alignment: Alignment.center,
+                child: Text(middleText,
+                    style: const TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w500,
+                        color: Color.fromARGB(255, 78, 78, 78)))),
+            const Spacer(),
+            const SizedBox(
+                width: 70,
+                child: Text('Points',
+                    style: TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w500,
+                        color: Color.fromARGB(255, 78, 78, 78)))),
+          ],
+        ));
   }
 }
 
@@ -295,11 +301,31 @@ class _JoinPage extends State<JoinPage> {
   final teamController = TextEditingController();
   bool inTeam = false;
   bool nonExistantTeam = false;
+  //team names
+
+  List<String> teamNames = [];
+  buildTeam() async {
+    String url = "https://sdp23.cse.uconn.edu/team-leaderboard";
+    var response = await http.get(Uri.parse(url));
+    List<dynamic> jsonMap = jsonDecode(response.body);
+    // setState(() {});
+    return jsonMap;
+  }
+
+  buildTeamNames() async {
+    List<dynamic> jsonMap = await buildTeam();
+    for (int i = 0; i < jsonMap.length; i++) {
+      teamNames.add(jsonMap[i]['Team_Names']);
+    }
+    print(teamNames);
+    return teamNames;
+  }
 
   @override
   Widget build(BuildContext context) {
-    return 
-    Scaffold(
+    buildTeamNames();
+    return Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           title: const Text('Join Team'),
         ),
@@ -312,21 +338,36 @@ class _JoinPage extends State<JoinPage> {
                         Padding(
                             padding: const EdgeInsets.only(
                                 left: 15, right: 15, top: 15),
-                            child: TextFormField(
-                                controller: teamController,
-                                decoration: const InputDecoration(
-                                    border: OutlineInputBorder(),
-                                    prefixIcon: Icon(Icons.group),
-                                    labelText: 'Team Name',
-                                    hintText: 'Enter team'),
-                            validator: (value) {
-                            if (value != '' && !inTeam && !nonExistantTeam) {
-                              return null;
-                            } else if (inTeam == true) {
-                              return 'Already in a team.';
-                            }
-                            return 'The team does not exist.';
-                          },)),
+                            //how to add autocomplete to TextFormField?
+
+                            child: SimpleAutocompleteFormField<String>(
+                              controller: teamController,
+                              decoration: const InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  prefixIcon: Icon(Icons.group),
+                                  labelText: 'Team Name',
+                                  hintText: 'Enter team'),
+                              itemBuilder: (context, item) => Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Text(item!),
+                              ),
+                              suggestionsHeight: 100,
+                              onSearch: (search) async => teamNames
+                                  .where((team) => team
+                                      .toLowerCase()
+                                      .contains(search.toLowerCase()))
+                                  .toList(),
+                              validator: (value) {
+                                if (value != '' &&
+                                    !inTeam &&
+                                    !nonExistantTeam) {
+                                  return null;
+                                } else if (inTeam == true) {
+                                  return 'Already in a team.';
+                                }
+                                return 'The team does not exist.';
+                              },
+                            )),
                         Padding(
                             padding: const EdgeInsets.only(top: 15),
                             child: Container(
@@ -337,19 +378,24 @@ class _JoinPage extends State<JoinPage> {
                                   borderRadius: BorderRadius.circular(20)),
                               child: TextButton(
                                 onPressed: () async {
-
-                                  joinTeam(widget.username, teamController.text).then((value) => {
-                                    if(value == 'Success'){
-                                    Navigator.pop(context)
-                                  } else if (value == 'You are already in a team.'){
-                                    inTeam = true,
-                                    _formKey.currentState!.validate()
-                                  } else {
-                                    nonExistantTeam = true,
-                                    _formKey.currentState!.validate()
-                                  }
-                                  });
-                                  
+                                  joinTeam(widget.username, teamController.text)
+                                      .then((value) => {
+                                            if (value == 'Success')
+                                              {Navigator.pop(context)}
+                                            else if (value ==
+                                                'You are already in a team.')
+                                              {
+                                                inTeam = true,
+                                                _formKey.currentState!
+                                                    .validate()
+                                              }
+                                            else
+                                              {
+                                                nonExistantTeam = true,
+                                                _formKey.currentState!
+                                                    .validate()
+                                              }
+                                          });
                                 },
                                 child: const Text(
                                   'Join',
