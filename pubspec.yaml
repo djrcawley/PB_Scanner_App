@@ -43,6 +43,7 @@ dependencies:
   crypto: ^3.0.2
   qr_code_scanner: ^1.0.1
   simple_autocomplete_formfield: ^0.3.0
+  flutter_speed_dial: ^6.2.0
 
 dev_dependencies:
   flutter_test:
