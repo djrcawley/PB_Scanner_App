@@ -51,8 +51,8 @@ class _LoginPage extends State<LoginPage> {
                             controller: userController,
                             decoration: const InputDecoration(
                                 border: OutlineInputBorder(),
-                                labelText: 'Email',
-                                hintText: 'Enter email'),
+                                labelText: 'Username',
+                                hintText: 'Enter username'),
                             validator: (value) {
                               if (value != '' && !incorrectCredentials) {
                                 return null;
