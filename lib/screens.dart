@@ -17,3 +17,4 @@ export 'camera.dart';
 export 'result.dart';
 export 'create.dart';
 export 'leaderboard.dart';
+export 'stats.dart';

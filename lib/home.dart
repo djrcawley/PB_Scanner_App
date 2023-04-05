@@ -250,31 +250,6 @@ class MStatWid extends StatelessWidget {
         appBar: AppBar(
           title: const Text('Stats'),
         ),
-        body: ListView(
-          padding: const EdgeInsets.all(8.0),
-          itemExtent: 106.0,
-          children: <CustomListItem>[
-            CustomListItem(
-              barscan: '4',
-              compbar: 3,
-              daily: 4,
-              points: 500,
-              thumbnail: Container(
-                decoration: const BoxDecoration(color: Colors.yellow),
-              ),
-              title: 'Your Stats',
-            ),
-            CustomListItem(
-              barscan: '10',
-              compbar: 7,
-              daily: 10,
-              points: 1200,
-              thumbnail: Container(
-                decoration: const BoxDecoration(color: Colors.blue),
-              ),
-              title: 'Goals',
-            ),
-          ],
-        ));
+        body: StatsPage());
   }
 }
