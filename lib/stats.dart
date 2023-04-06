@@ -36,6 +36,14 @@ class _StatsPageState extends State<StatsPage> {
               height: 10,
             ),
             StatBox(title: "Total Packages Scanned", stat: "16 Packages", image: 'assets/images/box.png', average: "Average: 2 Packages"),
+            SizedBox(
+              height: 10,
+            ),
+            StatBox(title: "Daily Streak", stat: "10 Days", image: 'assets/images/streak.png', average: "Average: 0.5 Packages"),
+            SizedBox(
+              height: 10,
+            ),
+            StatBox(title: "Team", stat: "Uconn", image: 'assets/images/team.png', average: "Team Points: 15324"),
           ],
         )));
   }
