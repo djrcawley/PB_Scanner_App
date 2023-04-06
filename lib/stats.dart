@@ -24,6 +24,7 @@ class StatsPage extends StatefulWidget {
 
 class StatsPageState extends State<StatsPage> {
   List<ChartData> chartData = [];
+  List<ChartData> chartData2 = [];
   List<rData> radData = [];
   late TooltipBehavior tooltip;
   
@@ -65,7 +66,14 @@ class StatsPageState extends State<StatsPage> {
 
     for(var i=0;i<personal.length;i++)
     {
-      chartData.add(ChartData(names[i],personal[i],average[i]));
+      if(i==0)
+      {
+        chartData2.add(ChartData(names[i],personal[i],average[i]));
+      }
+      else
+      {
+        chartData.add(ChartData(names[i],personal[i],average[i]));
+      }
       radData.add(rData(names[i], personal[i]));
     }
     setState(() {  });
@@ -85,17 +93,16 @@ class StatsPageState extends State<StatsPage> {
     return Scaffold(
       appBar: AppBar(title: Text("Statistics")),
       body: SingleChildScrollView(
-
-          child: Column(
-            children: [
-              SizedBox(height: 20),
-              BarGraph(chartData: chartData, tooltip: tooltip),
-              SizedBox(height: 50),
-              Center(child: Text("Goals")),
-              RadGraph(radData: radData, tooltip: tooltip)
-            ]
-          )
-        
+        child: Column(
+          children: [
+            SizedBox(height: 20),
+            BarGraph(chartData: chartData, tooltip: tooltip),
+            BarGraph(chartData: chartData2, tooltip: tooltip),
+            SizedBox(height: 50),
+            Center(child: Text("Goals")),
+            RadGraph(radData: radData, tooltip: tooltip)
+          ]
+        ) 
       )
     );
   }

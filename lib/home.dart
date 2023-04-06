@@ -116,4 +116,3 @@ class _Settings extends State<Settings> {
     );
   }
 }
-
