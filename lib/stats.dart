@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'screens.dart';
 import 'package:http/http.dart' as http;
 
@@ -26,6 +24,7 @@ class StatsPage extends StatefulWidget {
 
 class StatsPageState extends State<StatsPage> {
   List<ChartData> chartData = [];
+  List<rData> radData = [];
   late TooltipBehavior tooltip;
   
 
@@ -34,7 +33,6 @@ class StatsPageState extends State<StatsPage> {
     List<String> names = ["Total points", "Packages scanned", "Daily streak"];
     List<int> personal=[];
     List<double> average=[];
-    print(widget.username);
     String url = "https://sdp23.cse.uconn.edu/stats";
     var response = await http.post(
       Uri.parse(url),
@@ -46,11 +44,8 @@ class StatsPageState extends State<StatsPage> {
         }),
     );
 
-    print(response.body.toString());
     jsonMap = jsonDecode(response.body);
-    print("jsonMap initialized");
     int i=0;
-    print(jsonMap['personal_stats']);
     for(var item in jsonMap.entries)
     {
       for(var item2 in item.value.entries)
@@ -67,13 +62,13 @@ class StatsPageState extends State<StatsPage> {
         i++;
       }
     }
-    print(personal);
-    print(average);
 
     for(var i=0;i<personal.length;i++)
     {
       chartData.add(ChartData(names[i],personal[i],average[i]));
+      radData.add(rData(names[i], personal[i]));
     }
+    setState(() {  });
     return true;
     //item['username'].toString()+'\'s points'
   }
@@ -88,27 +83,71 @@ class StatsPageState extends State<StatsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Center(
-            child: Container(
-                child: SfCartesianChart(
-                    // Columns will be rendered back to back
-                    tooltipBehavior: tooltip,
-                    enableSideBySideSeriesPlacement: true,
-                    primaryXAxis: CategoryAxis(),
-                    series: <ChartSeries<ChartData, String>>[
-          ColumnSeries<ChartData, String>(
-              dataSource: chartData,
-              xValueMapper: (ChartData data, _) => data.x,
-              yValueMapper: (ChartData data, _) => data.y,
-              name: '2014'),
-          ColumnSeries<ChartData, String>(
-              opacity: 0.9,
-              width: 0.4,
-              dataSource: chartData,
-              xValueMapper: (ChartData data, _) => data.x,
-              yValueMapper: (ChartData data, _) => data.y1,
-              name: '2015')
-        ]))));
+      appBar: AppBar(title: Text("Statistics")),
+      body: SingleChildScrollView(
+
+          child: Column(
+            children: [
+              SizedBox(height: 20),
+              BarGraph(chartData: chartData, tooltip: tooltip),
+              SizedBox(height: 50),
+              Center(child: Text("Goals")),
+              RadGraph(radData: radData, tooltip: tooltip)
+            ]
+          )
+        
+      )
+    );
+  }
+}
+
+
+
+class BarGraph extends StatelessWidget {
+  final List<ChartData> chartData;
+  final TooltipBehavior tooltip;
+  const BarGraph({Key? key, required this.chartData, required this.tooltip});
+
+  @override
+  Widget build(BuildContext context) {
+    return SfCartesianChart(
+      // Columns will be rendered back to back
+      tooltipBehavior: tooltip,
+      enableSideBySideSeriesPlacement: true,
+      primaryXAxis: CategoryAxis(),
+      series: <ChartSeries<ChartData, String>>[
+      ColumnSeries<ChartData, String>(
+          dataSource: chartData,
+          xValueMapper: (ChartData data, _) => data.x,
+          yValueMapper: (ChartData data, _) => data.y,
+          name: 'Your stats'),
+      ColumnSeries<ChartData, String>(
+          dataSource: chartData,
+          xValueMapper: (ChartData data, _) => data.x,
+          yValueMapper: (ChartData data, _) => data.y1,
+          name: 'Average stats')
+      ]
+    );
+  }
+}
+
+
+class RadGraph extends StatelessWidget {
+  final List<rData> radData;
+  final TooltipBehavior tooltip;
+  const RadGraph({Key? key, required this.radData, required this.tooltip});
+
+  @override
+  Widget build(BuildContext context) {
+    return SfCircularChart(series: <CircularSeries>[
+      // Renders radial bar chart
+      RadialBarSeries<rData, String>(
+        dataSource: radData,
+        xValueMapper: (rData data, _) => data.x,
+        yValueMapper: (rData data, _) => data.y,
+        dataLabelSettings: DataLabelSettings(isVisible: true)
+      )
+    ]);
   }
 }
 
@@ -117,4 +156,10 @@ class ChartData {
   final String x;
   final int y;
   final double y1;
+}
+
+class rData {
+  rData(this.x, this.y);
+  final String x;
+  final int y;
 }
