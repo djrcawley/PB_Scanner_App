@@ -87,7 +87,7 @@ class _StatsPageState extends State<StatsPage> {
                               "Average: 265 Points",
                               style: TextStyle(
                                 fontWeight: FontWeight.normal,
-                                fontSize: 10,
+                                fontSize: 13,
                               ),
                             )
                           ],
@@ -157,7 +157,7 @@ class _StatsPageState extends State<StatsPage> {
                               "Average: 2 Packages",
                               style: TextStyle(
                                 fontWeight: FontWeight.normal,
-                                fontSize: 10,
+                                fontSize: 13,
                               ),
                             )
                           ],
