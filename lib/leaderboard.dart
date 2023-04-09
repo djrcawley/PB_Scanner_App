@@ -72,6 +72,7 @@ class _Leaderboard extends State<Leaderboard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: grey.withOpacity(0.25),
         body: Column(mainAxisSize: MainAxisSize.min, children: [
       const TopRow(middleText: 'User'),
       Expanded(
@@ -242,6 +243,7 @@ class _Leaderboard2 extends State<Leaderboard2> {
     }
 
     return Scaffold(
+      backgroundColor: grey.withOpacity(0.25),
       body: Column(mainAxisSize: MainAxisSize.min, children: [
         const TopRow(middleText: 'Team'),
         const Divider(
@@ -261,10 +263,6 @@ class _Leaderboard2 extends State<Leaderboard2> {
                     itemCount: jsonMap.length,
                     itemBuilder: (context, index) {
                       return Card(
-                        color: (jsonMap[index]['Members']
-                                .contains(widget.username))
-                            ? Color.fromARGB(255, 224, 224, 224)
-                            : const Color(0xfffafafa),
                         child: ListTile(
                           // Rank
                           leading: Text(
@@ -283,7 +281,10 @@ class _Leaderboard2 extends State<Leaderboard2> {
                                 CircleAvatar(
                                   backgroundColor: Colors.grey.shade200,
                                   child: Text(
-                                    '🌐',
+                                    (jsonMap[index]['Members']
+                                .contains(widget.username))
+                            ? '⭐'
+                            : '🌐',
                                     style: TextStyle(
                                       fontSize: 25.0,
                                     ),
@@ -321,7 +322,6 @@ class TopRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        color: Color.fromARGB(171, 194, 193, 193),
         child: Row(
           children: [
             Container(
