@@ -75,6 +75,12 @@ class _Leaderboard extends State<Leaderboard> {
       backgroundColor: grey.withOpacity(0.25),
         body: Column(mainAxisSize: MainAxisSize.min, children: [
       const TopRow(middleText: 'User'),
+      const Divider(
+          indent: 5,
+          endIndent: 5,
+          color: Color.fromARGB(255, 78, 78, 78),
+          thickness: 0.5,
+        ),
       Expanded(
           child: RefreshIndicator(
               onRefresh: () {
