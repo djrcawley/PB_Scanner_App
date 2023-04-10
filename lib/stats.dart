@@ -1,7 +1,4 @@
-import 'dart:math';
-
 import 'screens.dart';
-import 'package:percent_indicator/percent_indicator.dart';
 
 const Color primary = Color(0xFFFF3378);
 const Color secondary = Color(0xFFFF2278);
