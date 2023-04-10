@@ -123,12 +123,12 @@ class BarGraph extends StatelessWidget {
       enableSideBySideSeriesPlacement: true,
       primaryXAxis: CategoryAxis(),
       series: <ChartSeries<ChartData, String>>[
-      ColumnSeries<ChartData, String>(
+      BarSeries<ChartData, String>(
           dataSource: chartData,
           xValueMapper: (ChartData data, _) => data.x,
           yValueMapper: (ChartData data, _) => data.y,
           name: 'Your stats'),
-      ColumnSeries<ChartData, String>(
+      BarSeries<ChartData, String>(
           dataSource: chartData,
           xValueMapper: (ChartData data, _) => data.x,
           yValueMapper: (ChartData data, _) => data.y1,
