@@ -1,172 +1,338 @@
 import 'screens.dart';
-import 'package:http/http.dart' as http;
 
-
-class _ChartApp extends StatelessWidget {
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(primarySwatch: Colors.blue),
-      home: StatsPage(username: "teset"),
-    );
-  }
-}
+const Color primary = Color(0xFFFF3378);
+const Color secondary = Color(0xFFFF2278);
+const Color black = Color(0xFF000000);
+const Color white = Color(0xFFFFFFFF);
+const Color grey = Colors.grey;
+const Color red = Color(0xFFec5766);
+const Color green = Color(0xFF43aa8b);
+const Color blue = Color(0xFF28c2ff);
 
 class StatsPage extends StatefulWidget {
-  // ignore: prefer_const_constructors_in_immutables
-  final String username;
-  const StatsPage({Key? key, required this.username}) : super(key: key);
+  const StatsPage({super.key});
 
   @override
-  StatsPageState createState() => StatsPageState();
+  State<StatsPage> createState() {
+    return _StatsPageState();
+  }
 }
 
-class StatsPageState extends State<StatsPage> {
-  List<ChartData> chartData = [];
-  List<ChartData> chartData2 = [];
-  List<rData> radData = [];
-  late TooltipBehavior tooltip;
-  
-
-  Future<bool> buildList() async {
-    Map<String, dynamic> jsonMap;
-    List<String> names = ["Total points", "Packages scanned", "Daily streak"];
-    List<int> personal=[];
-    List<double> average=[];
-    String url = "https://sdp23.cse.uconn.edu/stats";
-    var response = await http.post(
-      Uri.parse(url),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: jsonEncode(<String, String>{
-          'username': widget.username,
-        }),
-    );
-
-    jsonMap = jsonDecode(response.body);
-    int i=0;
-    for(var item in jsonMap.entries)
-    {
-      for(var item2 in item.value.entries)
-      {
-        if(i>=1&&i<=3)
-        {
-          personal.add(item2.value);
-        }
-        else if(i>=4&&i<=6)
-        {
-          average.add(item2.value);
-        }
-        //chartData.add(ChartData(item['total_points'], item['packages_scanned']));
-        i++;
-      }
-    }
-
-    for(var i=0;i<personal.length;i++)
-    {
-      if(i==0)
-      {
-        chartData2.add(ChartData(names[i],personal[i],average[i]));
-      }
-      else
-      {
-        chartData.add(ChartData(names[i],personal[i],average[i]));
-      }
-      radData.add(rData(names[i], personal[i]));
-    }
-    setState(() {  });
-    return true;
-    //item['username'].toString()+'\'s points'
-  }
-
+class _StatsPageState extends State<StatsPage> {
+  String points = '0';
+  String avgPoints = '0';
+  String streak = '0';
+  String avgStreak = '0';
+  String team = '';
+  String teamPoints = '0';
+  String packages = '0';
+  String avgPackages = '0';
+  double pointPercent = 0.0;
+  double avgPercent = 0.0;
+  double streakPercent = 0.0;
+  double avgStreakPercent = 0.0;
+  double packagePercent = 0.0;
+  double avgPackagePercent = 0.0;
   @override
   void initState() {
-    tooltip = TooltipBehavior(enable: true);
     super.initState();
-    buildList();
+    getPersonalInfo();
+  }
+
+  Future<bool> getPersonalInfo() async {
+    String url = "https://sdp23.cse.uconn.edu/stats";
+    final encoding = Encoding.getByName('utf-8');
+    final header = {
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    };
+    const storage = FlutterSecureStorage();
+    String? user = await storage.read(key: 'user');
+    Map<String, String> body = {
+      'username': user!,
+    };
+    String jsonBody = json.encode(body);
+    Response response = await post(
+      Uri.parse(url),
+      headers: header,
+      body: jsonBody,
+      encoding: encoding,
+    );
+    Map<dynamic, dynamic> responseJson = jsonDecode(response.body);
+    points = responseJson['personal_stats']['total_points'].toString();
+    avgPoints = responseJson['average_stats']['average_points'].toString();
+    streak = responseJson['personal_stats']['daily_streak'].toString();
+    avgStreak = responseJson['average_stats']['average_streak'].toString();
+    packages = responseJson['personal_stats']['packages_scanned'].toString();
+    avgPackages = responseJson['average_stats']['average_packages'].toString();
+    team = responseJson['team']['team'].toString();
+    teamPoints = responseJson['team']['points'].toString();
+    double maxPoints = max(double.parse(points), double.parse(avgPoints));
+    pointPercent = double.parse(points) / maxPoints;
+    avgPercent = double.parse(avgPoints) / maxPoints;
+
+    double maxPackage = max(double.parse(packages), double.parse(avgPackages));
+    packagePercent = double.parse(packages) / maxPackage;
+    avgPackagePercent = double.parse(avgPackages) / maxPackage;
+
+    double maxStreak = max(double.parse(streak), double.parse(avgStreak));
+    streakPercent =
+        (double.parse(streak) == 0.0) ? 0 : double.parse(streak) / maxStreak;
+    avgStreakPercent = (double.parse(avgStreak) == 0.0)
+        ? 0
+        : double.parse(avgStreak) / maxStreak;
+    setState(() {});
+    return true;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Statistics")),
-      body: SingleChildScrollView(
-        child: Column(
+        backgroundColor: grey.withOpacity(0.25),
+        body: SingleChildScrollView(
+            child: Column(
           children: [
-            SizedBox(height: 20),
-            BarGraph(chartData: chartData, tooltip: tooltip),
-            BarGraph(chartData: chartData2, tooltip: tooltip),
-            SizedBox(height: 50),
-            Center(child: Text("Goals")),
-            RadGraph(radData: radData, tooltip: tooltip)
-          ]
-        ) 
-      )
-    );
+            SizedBox(
+              height: 10,
+            ),
+            StatBox(
+              title: "Total Points Earned",
+              statTitle: "$points Points",
+              image: 'assets/images/badge.png',
+              averageTitle: "Average: $avgPoints Points",
+              statPlain: points,
+              averagePlain: avgPoints,
+              user: pointPercent,
+              avg: avgPercent,
+              showChart: true,
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            StatBox(
+              title: "Total Packages Scanned",
+              statTitle: "$packages Packages",
+              image: 'assets/images/box.png',
+              averageTitle: "Average: $avgPackages Packages",
+              statPlain: packages,
+              averagePlain: avgPackages,
+              user: packagePercent,
+              avg: avgPackagePercent,
+              showChart: true,
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            StatBox(
+              title: "Daily Streak",
+              statTitle: "$streak Days",
+              image: 'assets/images/streak.png',
+              averageTitle: "Average: $avgStreak Days",
+              statPlain: streak,
+              averagePlain: avgStreak,
+              user: streakPercent,
+              avg: avgStreakPercent,
+              showChart: true,
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            StatBox(
+              title: "Team",
+              statTitle: "$team",
+              image: 'assets/images/team.png',
+              averageTitle: "Team Points: $teamPoints",
+              showChart: false,
+            ),
+          ],
+        )));
   }
 }
 
+class StatBox extends StatefulWidget {
+  final String title;
+  final String statTitle;
+  final String averageTitle;
+  final String? statPlain;
+  final String? averagePlain;
+  final String image;
+  final double? user;
+  final double? avg;
+  final bool showChart;
 
+  bool isChartVisible = false;
 
-class BarGraph extends StatelessWidget {
-  final List<ChartData> chartData;
-  final TooltipBehavior tooltip;
-  const BarGraph({Key? key, required this.chartData, required this.tooltip});
+  StatBox(
+      {super.key,
+      required this.title,
+      required this.image,
+      this.user,
+      this.avg,
+      required this.showChart,
+      required this.statTitle,
+      required this.averageTitle,
+      this.statPlain,
+      this.averagePlain});
+
+  @override
+  State<StatBox> createState() {
+    return _StatBox();
+  }
+}
+
+class _StatBox extends State<StatBox> {
+  _StatBox();
 
   @override
   Widget build(BuildContext context) {
-    return SfCartesianChart(
-      // Columns will be rendered back to back
-      tooltipBehavior: tooltip,
-      enableSideBySideSeriesPlacement: true,
-      primaryXAxis: CategoryAxis(),
-      series: <ChartSeries<ChartData, String>>[
-      ColumnSeries<ChartData, String>(
-          dataSource: chartData,
-          xValueMapper: (ChartData data, _) => data.x,
-          yValueMapper: (ChartData data, _) => data.y,
-          name: 'Your stats'),
-      ColumnSeries<ChartData, String>(
-          dataSource: chartData,
-          xValueMapper: (ChartData data, _) => data.x,
-          yValueMapper: (ChartData data, _) => data.y1,
-          name: 'Average stats')
-      ]
-    );
+    return GestureDetector(
+        onTap: () {
+          setState(() {
+            widget.isChartVisible = !widget.isChartVisible;
+          });
+        },
+        child: Padding(
+              padding: const EdgeInsets.only(left: 20, right: 20),
+              child: Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                    color: white,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: grey.withOpacity(0.01),
+                        spreadRadius: 10,
+                        blurRadius: 3,
+                        // changes position of shadow
+                      ),
+                    ]),
+                child: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          top: 10,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              widget.title,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 13,
+                                color: Color(0xff67727d),
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Image.asset(
+                              height: 100,
+                              width: 100,
+                              widget.image,
+                            ),
+                            Text(
+                              widget.statTitle,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 25,
+                              ),
+                            ),
+                            Text(
+                              widget.averageTitle,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.normal,
+                                fontSize: 13,
+                              ),
+                            ),
+                            if (widget.showChart && widget.isChartVisible) ...{
+                              const Divider(
+                                indent: 5,
+                                endIndent: 5,
+                                color: Color.fromARGB(255, 78, 78, 78),
+                                thickness: 0.5,
+                              ),
+                              Column(
+                                children: <Widget>[
+                                  const Padding(
+                                      padding: EdgeInsets.only(top: 10)),
+                                  LinearPercentIndicator(
+                                    alignment: MainAxisAlignment.center,
+                                    width: 200,
+                                    lineHeight: 15,
+                                    percent: widget.user!,
+                                    leading: Container(
+                                      width: 50,
+                                      child: Text(
+                                        "User",
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                    trailing: Container(
+                                      width: 50,
+                                      child: Text(
+                                        widget.statPlain!,
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                    progressColor: Colors.red,
+                                    backgroundColor: Colors.transparent,
+                                    barRadius: Radius.circular(5),
+                                  ),
+                                  const Padding(
+                                      padding:
+                                          EdgeInsets.only(top: 10, bottom: 10)),
+                                  LinearPercentIndicator(
+                                    alignment: MainAxisAlignment.center,
+                                    width: 200,
+                                    lineHeight: 15,
+                                    percent: widget.avg!,
+                                    leading: Container(
+                                      width: 50,
+                                      child: Text(
+                                        "Average",
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                    trailing: Container(
+                                      width: 50,
+                                      child: Text(
+                                        widget.averagePlain!,
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                    progressColor: Colors.orange,
+                                    backgroundColor: Colors.transparent,
+                                    barRadius: Radius.circular(5),
+                                  ),
+                                  const Padding(
+                                      padding:
+                                          EdgeInsets.only(top: 10, bottom: 10)),
+                                ],
+                              ),
+                            }
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ));
   }
-}
-
-
-class RadGraph extends StatelessWidget {
-  final List<rData> radData;
-  final TooltipBehavior tooltip;
-  const RadGraph({Key? key, required this.radData, required this.tooltip});
-
-  @override
-  Widget build(BuildContext context) {
-    return SfCircularChart(series: <CircularSeries>[
-      // Renders radial bar chart
-      RadialBarSeries<rData, String>(
-        dataSource: radData,
-        xValueMapper: (rData data, _) => data.x,
-        yValueMapper: (rData data, _) => data.y,
-        dataLabelSettings: DataLabelSettings(isVisible: true)
-      )
-    ]);
-  }
-}
-
-class ChartData {
-  ChartData(this.x, this.y, this.y1);
-  final String x;
-  final int y;
-  final double y1;
-}
-
-class rData {
-  rData(this.x, this.y);
-  final String x;
-  final int y;
 }

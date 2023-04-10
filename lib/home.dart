@@ -1,6 +1,4 @@
 import 'screens.dart';
-import 'package:http/http.dart' as http;
-
 
 class HomePage extends StatefulWidget {
   final CameraDescription camera;
@@ -32,7 +30,7 @@ class FirstRoute extends State<HomePage> {
             camera: widget.camera,
             username: widget.username,
           ),
-          StatsPage(username: widget.username),
+          const MStatWid(),
           Settings(camera: widget.camera),
         ].elementAt(_selectedIndex), //New
       ),
@@ -114,5 +112,18 @@ class _Settings extends State<Settings> {
             }),
       ]),
     );
+  }
+}
+
+class MStatWid extends StatelessWidget {
+  const MStatWid({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          title: const Text('Statistics'),
+        ),
+        body: const StatsPage());
   }
 }
