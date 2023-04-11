@@ -82,8 +82,8 @@ class _CreatePage extends State<CreatePage> {
                             controller: userController,
                             decoration: const InputDecoration(
                                 border: OutlineInputBorder(),
-                                labelText: 'Email',
-                                hintText: 'Enter email'),
+                                labelText: 'Username',
+                                hintText: 'Enter username'),
                             validator: (value) {
                               if (value != '' && !existingAccount) {
                                 return null;
