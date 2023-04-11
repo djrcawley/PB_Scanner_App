@@ -1,7 +1,7 @@
 export 'dart:async';
 export 'package:flutter/material.dart';
 export 'package:flutter_secure_storage/flutter_secure_storage.dart';
-export 'package:percent_indicator/percent_indicator.dart';
+export 'package:syncfusion_flutter_charts/charts.dart';
 export 'package:crypto/crypto.dart';
 export 'dart:math';
 //for camera page
