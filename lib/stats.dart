@@ -48,11 +48,11 @@ class _StatsPageState extends State<StatsPage> {
     );
     Map<dynamic, dynamic> responseJson = jsonDecode(response.body);
     points = responseJson['personal_stats']['total_points'].toString();
-    avgPoints = responseJson['average_stats']['average_points'].toString();
+    avgPoints = double.parse(responseJson['average_stats']['average_points'].toString()).toStringAsFixed(2);
     streak = responseJson['personal_stats']['daily_streak'].toString();
-    avgStreak = responseJson['average_stats']['average_streak'].toString();
+    avgStreak = double.parse(responseJson['average_stats']['average_streak'].toString()).toStringAsFixed(2);
     packages = responseJson['personal_stats']['packages_scanned'].toString();
-    avgPackages = responseJson['average_stats']['average_packages'].toString();
+    avgPackages = double.parse(responseJson['average_stats']['average_packages'].toString()).toStringAsFixed(2);
     team = responseJson['team']['team'].toString();
     teamPoints = responseJson['team']['points'].toString();
     setState(() {});
