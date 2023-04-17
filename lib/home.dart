@@ -1,9 +1,5 @@
 import 'screens.dart';
 import 'package:http/http.dart' as http;
-import 'package:simple_autocomplete_formfield/simple_autocomplete_formfield.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 class HomePage extends StatefulWidget {
   final CameraDescription camera;
@@ -39,7 +35,7 @@ class FirstRoute extends State<HomePage> {
       ),
       bottomNavigationBar: BottomNavigationBar(
           iconSize: 20,
-          selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
+          selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
           type: BottomNavigationBarType.fixed,
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
@@ -66,8 +62,6 @@ class FirstRoute extends State<HomePage> {
   }
 }
 
-// ignore: camel_case_types
-
 class Settings extends StatefulWidget {
   final CameraDescription camera;
   const Settings({super.key, required this.camera});
@@ -90,9 +84,7 @@ class _Settings extends State<Settings> {
 
   Future<bool> getUsername() async {
     username = (await storage.read(key: 'user'))!;
-    setState(() {
-      
-    });
+    setState(() {});
     return true;
   }
 
@@ -113,10 +105,10 @@ class _Settings extends State<Settings> {
                     builder: (context) => passBar(username: username)),
               );
             }),
-        ListTile(
+        const ListTile(
             leading: Icon(Icons.private_connectivity),
             title: Text("Privacy & Security")),
-        ListTile(
+        const ListTile(
             leading: Icon(Icons.notifications_active_outlined),
             title: Text("Notifications")),
         ListTile(
@@ -156,26 +148,24 @@ class passBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: DefaultTabController(
-        length: 2,
-        child: Scaffold(
-          appBar: AppBar(
-            title: Text('Account'),
-            bottom: const TabBar(
-              tabs: [
-                Tab(icon: Icon(Icons.person)),
-                Tab(icon: Icon(Icons.groups)),
-              ],
-            ),
-          ),
-          body: TabBarView(
-            physics: NeverScrollableScrollPhysics(),
-            children: [
-              UserPage(username: username),
-              PassPage(username: username),
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Account'),
+          bottom: const TabBar(
+            tabs: [
+              Tab(text: "Username"),
+              Tab(text: "Password"),
             ],
           ),
+        ),
+        body: TabBarView(
+          physics: const NeverScrollableScrollPhysics(),
+          children: [
+            UserPage(username: username),
+            PassPage(username: username),
+          ],
         ),
       ),
     );
@@ -234,13 +224,14 @@ class _passpage extends State<PassPage> {
                             padding: const EdgeInsets.only(top: 15),
                             child: Container(
                               height: 50,
-                              width: 200,
+                              width: 300,
                               decoration: BoxDecoration(
                                   color: Colors.blue,
                                   borderRadius: BorderRadius.circular(20)),
                               child: TextButton(
                                 onPressed: () async {
-                                  changePassword(widget.username, OldPass.text, newPass.text);
+                                  changePassword(widget.username, OldPass.text,
+                                      newPass.text);
                                 },
                                 child: const Text(
                                   'Change Password',
@@ -294,7 +285,7 @@ class _Userpage extends State<UserPage> {
                             padding: const EdgeInsets.only(top: 15),
                             child: Container(
                               height: 50,
-                              width: 200,
+                              width: 300,
                               decoration: BoxDecoration(
                                   color: Colors.blue,
                                   borderRadius: BorderRadius.circular(20)),
@@ -330,10 +321,10 @@ Future<String> changePassword(username, oldpass, newpass) async {
         'newPassword': new_pwh
       }));
 
-    if (response.body == 'Success') {
-      const storage = FlutterSecureStorage();
-      await storage.write(key: "user", value: username);
-      await storage.write(key: "pass", value: new_pwh);
+  if (response.body == 'Success') {
+    const storage = FlutterSecureStorage();
+    await storage.write(key: "user", value: username);
+    await storage.write(key: "pass", value: new_pwh);
   }
 
   return response.body;
@@ -348,7 +339,7 @@ Future<String> changeUserame(username, newUser) async {
       body: jsonEncode(
           <String, String>{'username': username, 'newUsername': newUser}));
 
-  if(response.body == "Success"){
+  if (response.body == "Success") {
     const storage = FlutterSecureStorage();
     await storage.write(key: "user", value: newUser);
   }
