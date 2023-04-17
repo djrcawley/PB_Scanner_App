@@ -224,7 +224,7 @@ class _passpage extends State<PassPage> {
                             padding: const EdgeInsets.only(top: 15),
                             child: Container(
                               height: 50,
-                              width: 300,
+                              width: 250,
                               decoration: BoxDecoration(
                                   color: Colors.blue,
                                   borderRadius: BorderRadius.circular(20)),
@@ -285,7 +285,7 @@ class _Userpage extends State<UserPage> {
                             padding: const EdgeInsets.only(top: 15),
                             child: Container(
                               height: 50,
-                              width: 300,
+                              width: 250,
                               decoration: BoxDecoration(
                                   color: Colors.blue,
                                   borderRadius: BorderRadius.circular(20)),
