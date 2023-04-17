@@ -27,7 +27,7 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>Take a flick ;)</string>
+	<string>Camera used only to scan barcodes</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Microphone usage</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
