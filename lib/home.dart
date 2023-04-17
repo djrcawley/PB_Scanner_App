@@ -7,8 +7,7 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 class HomePage extends StatefulWidget {
   final CameraDescription camera;
-  final String username;
-  const HomePage({super.key, required this.camera, required this.username});
+  const HomePage({super.key, required this.camera});
 
   @override
   State<HomePage> createState() => FirstRoute();
@@ -30,13 +29,12 @@ class FirstRoute extends State<HomePage> {
     return Scaffold(
       body: Center(
         child: [
-          TeamTabBar(username: widget.username),
+          const TeamTabBar(),
           TakePictureScreen(
             camera: widget.camera,
-            username: widget.username,
           ),
           const MStatWid(),
-          Settings(camera: widget.camera, username: widget.username),
+          Settings(camera: widget.camera),
         ].elementAt(_selectedIndex), //New
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -72,8 +70,7 @@ class FirstRoute extends State<HomePage> {
 
 class Settings extends StatefulWidget {
   final CameraDescription camera;
-  final String username;
-  const Settings({super.key, required this.camera, required this.username});
+  const Settings({super.key, required this.camera});
 
   @override
   State<Settings> createState() {
@@ -83,6 +80,21 @@ class Settings extends StatefulWidget {
 
 class _Settings extends State<Settings> {
   final storage = const FlutterSecureStorage();
+  String username = '';
+
+  @override
+  void initState() {
+    super.initState();
+    getUsername();
+  }
+
+  Future<bool> getUsername() async {
+    username = (await storage.read(key: 'user'))!;
+    setState(() {
+      
+    });
+    return true;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -98,7 +110,7 @@ class _Settings extends State<Settings> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => passBar(username: widget.username)),
+                    builder: (context) => passBar(username: username)),
               );
             }),
         ListTile(
@@ -228,7 +240,7 @@ class _passpage extends State<PassPage> {
                                   borderRadius: BorderRadius.circular(20)),
                               child: TextButton(
                                 onPressed: () async {
-                                  ChangePass(widget.username, OldPass, newPass);
+                                  changePassword(widget.username, OldPass, newPass);
                                 },
                                 child: const Text(
                                   'Change Password',
@@ -288,7 +300,7 @@ class _Userpage extends State<UserPage> {
                                   borderRadius: BorderRadius.circular(20)),
                               child: TextButton(
                                 onPressed: () async {
-                                  UserName(widget.username, newUser);
+                                  changeUserame(widget.username, newUser.text);
                                 },
                                 child: const Text(
                                   'Change Username',
@@ -302,7 +314,7 @@ class _Userpage extends State<UserPage> {
   }
 }
 
-Future<String> ChangePass(username, oldpass, newpass) async {
+Future<String> changePassword(username, oldpass, newpass) async {
   Uri uri = Uri.parse('https://sdp23.cse.uconn.edu/change-password');
   final response = await http.post(uri,
       headers: <String, String>{
@@ -317,14 +329,19 @@ Future<String> ChangePass(username, oldpass, newpass) async {
   return response.body;
 }
 
-Future<String> UserName(username, newUser) async {
-  Uri uri = Uri.parse('https://sdp23.cse.uconn.edu/change-password');
+Future<String> changeUserame(username, newUser) async {
+  Uri uri = Uri.parse('https://sdp23.cse.uconn.edu/change-username');
   final response = await http.post(uri,
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8'
       },
       body: jsonEncode(
           <String, String>{'username': username, 'newUsername': newUser}));
+
+  if(response.body == "Success"){
+    const storage = FlutterSecureStorage();
+    await storage.write(key: "user", value: newUser);
+  }
 
   return response.body;
 }

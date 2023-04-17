@@ -174,8 +174,7 @@ class _CreatePage extends State<CreatePage> {
                                         MaterialPageRoute(
                                             builder: (BuildContext context) {
                                       return HomePage(
-                                          camera: widget.camera,
-                                          username: userController.text);
+                                          camera: widget.camera);
                                     }), (r) {
                                       return false;
                                     });

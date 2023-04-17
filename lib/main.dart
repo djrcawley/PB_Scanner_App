@@ -25,7 +25,7 @@ Future<void> main() async {
   const storage = FlutterSecureStorage();
   String? user = await storage.read(key: 'user');
 
-  Widget nextScreen = (user != null) ? HomePage(camera: firstCamera, username: user) : LoginPage(camera: firstCamera);
+  Widget nextScreen = (user != null) ? HomePage(camera: firstCamera) : LoginPage(camera: firstCamera);
 
   runApp(
     MaterialApp(

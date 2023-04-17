@@ -4,10 +4,9 @@ import 'package:http/http.dart' as http;
 
 class TakePictureScreen extends StatefulWidget {
   const TakePictureScreen(
-      {super.key, required this.camera, required this.username});
+      {super.key, required this.camera});
 
   final CameraDescription camera;
-  final String username;
 
   @override
   State<StatefulWidget> createState() => _QRViewExampleState();
@@ -27,6 +26,23 @@ class _QRViewExampleState extends State<TakePictureScreen> {
       controller!.pauseCamera();
     }
     controller!.resumeCamera();
+  }
+
+  String username = '';
+
+  @override
+  void initState() {
+    super.initState();
+    getUsername();
+  }
+
+  Future<bool> getUsername() async {
+    const storage = FlutterSecureStorage();
+    username = (await storage.read(key: 'user'))!;
+    setState(() {
+      
+    });
+    return true;
   }
 
   @override
@@ -78,7 +94,6 @@ class _QRViewExampleState extends State<TakePictureScreen> {
 
           presentLoader(context);
           String encoded = base64Encode(result!.code!.codeUnits);
-          String username = widget.username;
 
           try {
             var results12 =

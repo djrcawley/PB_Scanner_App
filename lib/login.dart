@@ -115,8 +115,7 @@ class _LoginPage extends State<LoginPage> {
                                         MaterialPageRoute(
                                             builder: (BuildContext context) {
                                       return HomePage(
-                                          camera: widget.camera,
-                                          username: userController.text);
+                                          camera: widget.camera);
                                     }), (r) {
                                       return false;
                                     });
