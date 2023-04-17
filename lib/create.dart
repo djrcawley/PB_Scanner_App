@@ -1,6 +1,5 @@
 import 'screens.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class CreatePage extends StatefulWidget {
   final CameraDescription camera;
@@ -174,8 +173,7 @@ class _CreatePage extends State<CreatePage> {
                                         MaterialPageRoute(
                                             builder: (BuildContext context) {
                                       return HomePage(
-                                          camera: widget.camera,
-                                          username: userController.text);
+                                          camera: widget.camera);
                                     }), (r) {
                                       return false;
                                     });

@@ -5,9 +5,32 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
-class TeamTabBar extends StatelessWidget {
-  final String username;
-  const TeamTabBar({super.key, required this.username});
+class TeamTabBar extends StatefulWidget {
+  const TeamTabBar({super.key});
+
+  @override
+  State<TeamTabBar> createState() => _TeamTabBar();
+}
+
+class _TeamTabBar extends State<TeamTabBar> {
+  _TeamTabBar();
+
+  String username = '';
+
+  @override
+  void initState() {
+    super.initState();
+    getUsername();
+  }
+
+  Future<bool> getUsername() async {
+    const storage = FlutterSecureStorage();
+    username = (await storage.read(key: 'user'))!;
+    setState(() {
+      
+    });
+    return true;
+  }
 
   @override
   Widget build(BuildContext context) {

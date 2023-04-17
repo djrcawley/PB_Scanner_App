@@ -115,8 +115,7 @@ class _LoginPage extends State<LoginPage> {
                                         MaterialPageRoute(
                                             builder: (BuildContext context) {
                                       return HomePage(
-                                          camera: widget.camera,
-                                          username: userController.text);
+                                          camera: widget.camera);
                                     }), (r) {
                                       return false;
                                     });
@@ -180,7 +179,7 @@ Future<bool> loginRequest(username, pass) async {
   if (responseDecoded == 'Success') {
     const storage = FlutterSecureStorage();
     await storage.write(key: "user", value: username);
-    await storage.write(key: "pass", value: pass);
+    await storage.write(key: "pass", value: pwh);
     return true;
   }
   return false;
