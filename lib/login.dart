@@ -179,7 +179,7 @@ Future<bool> loginRequest(username, pass) async {
   if (responseDecoded == 'Success') {
     const storage = FlutterSecureStorage();
     await storage.write(key: "user", value: username);
-    await storage.write(key: "pass", value: pass);
+    await storage.write(key: "pass", value: pwh);
     return true;
   }
   return false;

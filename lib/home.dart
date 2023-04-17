@@ -240,7 +240,7 @@ class _passpage extends State<PassPage> {
                                   borderRadius: BorderRadius.circular(20)),
                               child: TextButton(
                                 onPressed: () async {
-                                  changePassword(widget.username, OldPass, newPass);
+                                  changePassword(widget.username, OldPass.text, newPass.text);
                                 },
                                 child: const Text(
                                   'Change Password',
@@ -315,6 +315,10 @@ class _Userpage extends State<UserPage> {
 }
 
 Future<String> changePassword(username, oldpass, newpass) async {
+  var old_bytes = utf8.encode(oldpass);
+  final String old_pwh = sha256.convert(old_bytes).toString();
+  var new_bytes = utf8.encode(newpass);
+  final String new_pwh = sha256.convert(new_bytes).toString();
   Uri uri = Uri.parse('https://sdp23.cse.uconn.edu/change-password');
   final response = await http.post(uri,
       headers: <String, String>{
@@ -322,9 +326,15 @@ Future<String> changePassword(username, oldpass, newpass) async {
       },
       body: jsonEncode(<String, String>{
         'username': username,
-        'password': oldpass,
-        'newPassword': newpass
+        'password': old_pwh,
+        'newPassword': new_pwh
       }));
+
+    if (response.body == 'Success') {
+      const storage = FlutterSecureStorage();
+      await storage.write(key: "user", value: username);
+      await storage.write(key: "pass", value: new_pwh);
+  }
 
   return response.body;
 }
