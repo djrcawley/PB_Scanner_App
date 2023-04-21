@@ -26,9 +26,7 @@ class _TeamTabBar extends State<TeamTabBar> {
   Future<bool> getUsername() async {
     const storage = FlutterSecureStorage();
     username = (await storage.read(key: 'user'))!;
-    setState(() {
-      
-    });
+    setState(() {});
     return true;
   }
 
@@ -431,6 +429,7 @@ class _JoinPage extends State<JoinPage> {
   Widget build(BuildContext context) {
     buildTeamNames();
     return Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           title: const Text('Join Team'),
         ),
@@ -441,40 +440,37 @@ class _JoinPage extends State<JoinPage> {
                     child: Column(
                       children: [
                         Padding(
-                            padding: const EdgeInsets.only(
-                                left: 15, right: 15, top: 15),
-                            //how to add autocomplete to TextFormField?
+                          padding: const EdgeInsets.only(
+                              left: 15, right: 15, top: 15),
+                          //how to add autocomplete to TextFormField?
 
-                            child:
-                                 SimpleAutocompleteFormField<String>(
-                                  controller: teamController,
-                                  decoration: const InputDecoration(
-                                      border: OutlineInputBorder(),
-                                      prefixIcon: Icon(Icons.group),
-                                      labelText: 'Team Name',
-                                      hintText: 'Enter team'),
-                                  itemBuilder: (context, item) => Padding(
-                                    padding: EdgeInsets.all(8.0),
-                                    child: Text(item!),
-                                  ),
-                                  suggestionsHeight: 100,
-                                  onSearch: (search) async => teamNames
-                                      .where((team) => team
-                                          .toLowerCase()
-                                          .contains(search.toLowerCase()))
-                                      .toList(),
-                                  validator: (value) {
-                                    if (value != '' &&
-                                        !inTeam &&
-                                        !nonExistantTeam) {
-                                      return null;
-                                    } else if (inTeam == true) {
-                                      return 'Already in a team.';
-                                    }
-                                    return 'The team does not exist.';
-                                  },
-                                ),
-                                ),
+                          child: SimpleAutocompleteFormField<String>(
+                            controller: teamController,
+                            decoration: const InputDecoration(
+                                border: OutlineInputBorder(),
+                                prefixIcon: Icon(Icons.group),
+                                labelText: 'Team Name',
+                                hintText: 'Enter team'),
+                            itemBuilder: (context, item) => Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text(item!),
+                            ),
+                            suggestionsHeight: 100,
+                            onSearch: (search) async => teamNames
+                                .where((team) => team
+                                    .toLowerCase()
+                                    .contains(search.toLowerCase()))
+                                .toList(),
+                            validator: (value) {
+                              if (value != '' && !inTeam && !nonExistantTeam) {
+                                return null;
+                              } else if (inTeam == true) {
+                                return 'Already in a team.';
+                              }
+                              return 'The team does not exist.';
+                            },
+                          ),
+                        ),
                         Padding(
                             padding: const EdgeInsets.only(top: 15),
                             child: Container(
@@ -535,6 +531,7 @@ class _TeamPage extends State<TeamPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           title: const Text('Create Team'),
         ),
