@@ -114,23 +114,23 @@ class _Leaderboard extends State<Leaderboard> {
                       itemBuilder: (context, index) {
                         return Card(
                           child: ListTile(
-                            // Rank
+                            // Ranking
                             leading: Text(
                               (index + 1).toString(),
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 20.0,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
-                            // Country & Username
+                            // Username & Emoji
                             title: Padding(
                               padding: const EdgeInsets.only(left: 12.0),
                               child: Row(
                                 children: [
-                                  // Country
+                                  // Emoji
                                   CircleAvatar(
                                     backgroundColor: Colors.grey.shade200,
-                                    child: Text(
+                                    child: const Text(
                                       '🌐',
                                       style: TextStyle(
                                         fontSize: 25.0,
@@ -299,7 +299,7 @@ class _Leaderboard2 extends State<Leaderboard2> {
                     itemBuilder: (context, index) {
                       return Card(
                         child: ListTile(
-                          // Rank
+                          // Ranking
                           leading: Text(
                             (index + 1).toString(),
                             style: const TextStyle(
@@ -307,12 +307,12 @@ class _Leaderboard2 extends State<Leaderboard2> {
                               fontWeight: FontWeight.w500,
                             ),
                           ),
-                          // Country & Username
+                          // Username & Emoji
                           title: Padding(
                             padding: const EdgeInsets.only(left: 12.0),
                             child: Row(
                               children: [
-                                // Country
+                                // Emoji
                                 CircleAvatar(
                                   backgroundColor: Colors.grey.shade200,
                                   child: Text(
@@ -320,13 +320,13 @@ class _Leaderboard2 extends State<Leaderboard2> {
                                             .contains(widget.username))
                                         ? '⭐'
                                         : '🌐',
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 25.0,
                                     ),
                                   ),
                                 ),
 
-                                // Username
+                                // Team Name
                                 Padding(
                                   padding: const EdgeInsets.only(left: 12.0),
                                   child: Text(
